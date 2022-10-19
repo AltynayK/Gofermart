@@ -1,16 +1,17 @@
 package repository
 
 import (
-	"database/sql"
-
 	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/jmoiron/sqlx"
 )
 
 type Authorization interface {
 	CreateUser(user gofermart.User) (int, error)
+	GetUser(login, password string) (gofermart.User, error)
 }
 
 type Order interface {
+	Create(userId int, number string) (int, error)
 }
 
 type Repository struct {
@@ -18,8 +19,9 @@ type Repository struct {
 	Order
 }
 
-func NewRepository(db *sql.DB) *Repository {
+func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
+		Order:         NewOrderPostgres(db),
 	}
 }

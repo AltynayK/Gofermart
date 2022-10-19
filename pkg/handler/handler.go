@@ -15,10 +15,14 @@ func NewHandler(services *service.Service) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-	api := router.Group("/api/user")
+	auth := router.Group("/api/user")
 	{
-		api.POST("/register", h.register)
-		api.POST("/login", h.login)
+		auth.POST("/register", h.register)
+		auth.POST("/login", h.login)
+
+	}
+	api := router.Group("/api/user", h.userIdentity)
+	{
 		api.POST("/orders", h.loadingOrders)
 		api.GET("/orders", h.receivingOrders)
 		api.GET("/balance", h.receivingBalance)
@@ -26,5 +30,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		api.GET("/balance/withdrawals", h.withdrawBalanceHistory)
 
 	}
+
 	return router
 }
