@@ -21,7 +21,7 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusConflict)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
 
 type loginInput struct {
@@ -41,9 +41,9 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 
 	h.services.Authorization.GenerateToken(input.Login, input.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusConflict)
+		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 }
