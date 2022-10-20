@@ -8,7 +8,7 @@ import (
 )
 
 func (h *Handler) loadingOrders(c *gin.Context) {
-	userId, err := getUserId(c)
+	userId, err := getUserID(c)
 	if err != nil {
 		return
 	}

@@ -1,9 +1,9 @@
 package gofermart
 
 type Orders struct {
-	Id         int    `json:"id"`
+	ID         int    `json:"id"`
 	Number     string `json:"number"`
-	UserId     int    `json:"user_id"`
+	UserID     int    `json:"user_id"`
 	Status     string `json:"status"`
 	Accrual    int    `json:"accrual"`
 	UploadedAt string `json:"uploaded_at"`
