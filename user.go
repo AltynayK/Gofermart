@@ -1,0 +1,8 @@
+package gofermart
+
+type User struct {
+	Id       int    `json:"-" db:"id"`
+	Login    string `json:"login" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Current  int    `json:"current"`
+}
