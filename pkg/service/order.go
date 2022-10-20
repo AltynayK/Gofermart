@@ -12,6 +12,6 @@ func NewOrderService(repo repository.Order) *OrderService {
 	return &OrderService{repo: repo}
 }
 
-func (s *OrderService) Create(userId int, number string) (int, error) {
-	return s.repo.Create(userId, number)
+func (s *OrderService) Create(userID int, number string) (int, error) {
+	return s.repo.Create(userID, number)
 }

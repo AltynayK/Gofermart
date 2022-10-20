@@ -12,7 +12,7 @@ type Authorization interface {
 }
 
 type Order interface {
-	Create(userId int, number string) (int, error)
+	Create(userID int, number string) (int, error)
 }
 
 type Service struct {

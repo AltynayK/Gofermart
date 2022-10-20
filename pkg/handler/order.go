@@ -8,13 +8,13 @@ import (
 )
 
 func (h *Handler) loadingOrders(c *gin.Context) {
-	userId, err := getUserId(c)
+	userID, err := getUserID(c)
 	if err != nil {
 		return
 	}
 	body := c.Request.Body
 	input, _ := ioutil.ReadAll(body)
-	id, err := h.services.Order.Create(userId, string(input))
+	id, err := h.services.Order.Create(userID, string(input))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
