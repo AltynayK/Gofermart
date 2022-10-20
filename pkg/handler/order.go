@@ -20,7 +20,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusAccepted, map[string]interface{}{
 		"id": id,
 	})
 
@@ -33,6 +33,7 @@ type getAllOrdersResponse struct {
 func (h *Handler) receivingOrders(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 	orders, err := h.services.Order.GetAll(userID)
@@ -40,6 +41,10 @@ func (h *Handler) receivingOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	// if orders == nil {
+	// 	newErrorResponse(c, http.StatusNoContent, err.Error())
+	// 	return
+	// }
 	c.JSON(http.StatusOK, getAllOrdersResponse{
 		Data: orders,
 	})
