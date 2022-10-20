@@ -19,7 +19,7 @@ const (
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserID int `json:"user_id"`
+	UserId int `json:"user_id"`
 }
 type AuthService struct {
 	repo repository.Authorization
@@ -44,7 +44,7 @@ func (s *AuthService) GenerateToken(login, password string) (string, error) {
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		user.ID,
+		user.Id,
 	})
 	return token.SignedString([]byte(signingKey))
 }
@@ -67,7 +67,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 		return 0, errors.New("token claims are not of type *tokenClaims")
 	}
 
-	return claims.UserID, nil
+	return claims.UserId, nil
 }
 
 func (s *AuthService) generatePasswordHash(password string) string {

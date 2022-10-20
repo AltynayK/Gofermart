@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
@@ -13,15 +13,23 @@ func NewHandler(services *service.Service) *Handler {
 	return &Handler{services: services}
 }
 
-func (h *Handler) InitRoutes() *mux.Router {
-	router := mux.NewRouter()
-	router.HandleFunc("/api/user/register", h.register).Methods("POST")
-	router.HandleFunc("/api/user/login", h.login).Methods("POST")
-	router.HandleFunc("/api/user/orders", h.loadingOrders).Methods("POST")
-	router.HandleFunc("/api/user/orders", h.receivingOrders).Methods("GET")
-	router.HandleFunc("/api/user/balance", h.receivingBalance).Methods("GET")
-	router.HandleFunc("/api/user/balance/withdraw", h.withdrawBalance).Methods("POST")
-	router.HandleFunc("/api/user/balance/withdrawals", h.withdrawBalanceHistory).Methods("GET")
+func (h *Handler) InitRoutes() *gin.Engine {
+	router := gin.New()
+	auth := router.Group("/api/user")
+	{
+		auth.POST("/register", h.register)
+		auth.POST("/login", h.login)
+
+	}
+	api := router.Group("/api/user", h.userIdentity)
+	{
+		api.POST("/orders", h.loadingOrders)
+		api.GET("/orders", h.receivingOrders)
+		api.GET("/balance", h.receivingBalance)
+		api.POST("/balance/withdraw", h.withdrawBalance)
+		api.GET("/balance/withdrawals", h.withdrawBalanceHistory)
+
+	}
 
 	return router
 }

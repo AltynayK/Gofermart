@@ -1,27 +1,26 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "application/json")
+func (h *Handler) register(c *gin.Context) {
 	var input gofermart.User
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-
-	h.services.Authorization.CreateUser(input)
+	id, err := h.services.Authorization.CreateUser(input)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusConflict)
+		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id": id,
+	})
 }
 
 type loginInput struct {
@@ -29,21 +28,18 @@ type loginInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("content-type", "application/json")
+func (h *Handler) login(c *gin.Context) {
 	var input loginInput
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-
-	h.services.Authorization.GenerateToken(input.Login, input.Password)
+	token, err := h.services.Authorization.GenerateToken(input.Login, input.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
+		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
 }
