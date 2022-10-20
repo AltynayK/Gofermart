@@ -14,17 +14,17 @@ func NewOrderPostgres(db *sqlx.DB) *OrderPostgres {
 	return &OrderPostgres{db: db}
 }
 
-func (r *OrderPostgres) Create(userID int, number string) (int, error) {
+func (r *OrderPostgres) Create(userID int, number string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
-		return 0, err
+		return err
 	}
 	var id int
-	createOrder := fmt.Sprintf("INSERT INTO %s (number, user_id) VALUES ($1, $2) RETURNING id", ordersTable)
+	createOrder := fmt.Sprintf("INSERT INTO %s (number, user_id) VALUES ($1, $2)", ordersTable)
 	row := tx.QueryRow(createOrder, number, userID)
 	if err := row.Scan(&id); err != nil {
 		tx.Rollback()
-		return 0, err
+		return err
 	}
-	return id, tx.Commit()
+	return tx.Commit()
 }
