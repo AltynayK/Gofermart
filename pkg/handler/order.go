@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,8 +25,24 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 	})
 
 }
-func (h *Handler) receivingOrders(c *gin.Context) {
 
+type getAllOrdersResponse struct {
+	Data []gofermart.OrdersOut `json:"data"`
+}
+
+func (h *Handler) receivingOrders(c *gin.Context) {
+	userID, err := getUserID(c)
+	if err != nil {
+		return
+	}
+	orders, err := h.services.Order.GetAll(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, getAllOrdersResponse{
+		Data: orders,
+	})
 }
 func (h *Handler) receivingBalance(c *gin.Context) {
 

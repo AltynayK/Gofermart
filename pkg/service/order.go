@@ -1,6 +1,7 @@
 package service
 
 import (
+	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
 )
 
@@ -14,4 +15,8 @@ func NewOrderService(repo repository.Order) *OrderService {
 
 func (s *OrderService) Create(userID int, number string) (int, error) {
 	return s.repo.Create(userID, number)
+}
+
+func (s *OrderService) GetAll(userID int) ([]gofermart.OrdersOut, error) {
+	return s.repo.GetAll(userID)
 }

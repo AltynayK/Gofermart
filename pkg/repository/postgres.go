@@ -37,7 +37,7 @@ func CreateTableUsers(db *sqlx.DB) {
 
 }
 func CreateTableOrders(db *sqlx.DB) {
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS orders (id serial primary key, number varchar UNIQUE, user_id int, status varchar, accrual int, uploaded_at varchar, withdrawn int)")
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS orders (id serial primary key, number varchar UNIQUE, user_id int, status varchar, accrual int DEFAULT 0, uploaded_at timestamptz NOT NULL, withdrawn int)")
 	if err != nil {
 		fmt.Print(err)
 	}
