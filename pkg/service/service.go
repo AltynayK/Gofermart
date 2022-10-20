@@ -6,7 +6,7 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user gofermart.User) (int, error)
+	CreateUser(user gofermart.User) error
 	GenerateToken(login, password string) (string, error)
 	ParseToken(token string) (int, error)
 }

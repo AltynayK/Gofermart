@@ -8,19 +8,18 @@ import (
 )
 
 func (h *Handler) register(c *gin.Context) {
+	c.Set("content-type", "application/json")
 	var input gofermart.User
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	id, err := h.services.Authorization.CreateUser(input)
+	err := h.services.Authorization.CreateUser(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
-	})
+	c.JSON(http.StatusOK, "")
 }
 
 type loginInput struct {
@@ -29,6 +28,7 @@ type loginInput struct {
 }
 
 func (h *Handler) login(c *gin.Context) {
+	c.Set("content-type", "application/json")
 	var input loginInput
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())

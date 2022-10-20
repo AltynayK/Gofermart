@@ -29,7 +29,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user gofermart.User) (int, error) {
+func (s *AuthService) CreateUser(user gofermart.User) error {
 	user.Password = s.generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }
