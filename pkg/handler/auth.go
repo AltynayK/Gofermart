@@ -19,7 +19,7 @@ func (h *Handler) register(c *gin.Context) {
 		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, "")
+	c.JSON(http.StatusOK, input)
 }
 
 type loginInput struct {
