@@ -3,18 +3,28 @@ package handler
 import (
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) loadingOrders(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 	body := c.Request.Body
 	input, _ := ioutil.ReadAll(body)
+	//проверка на корректность ввода с помощью алгоритма Луна
+	num, err := strconv.Atoi(string(input))
+	if !service.Valid(num) {
+		c.AbortWithStatus(http.StatusUnprocessableEntity)
+		return
+	}
+
 	id, err := h.services.Order.Create(userID, string(input))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -41,10 +51,10 @@ func (h *Handler) receivingOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	// if orders == nil {
-	// 	newErrorResponse(c, http.StatusNoContent, err.Error())
-	// 	return
-	// }
+	if orders == nil {
+		c.AbortWithStatus(http.StatusNoContent)
+		return
+	}
 	c.JSON(http.StatusOK, getAllOrdersResponse{
 		Data: orders,
 	})
