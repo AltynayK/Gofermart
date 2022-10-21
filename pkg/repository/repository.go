@@ -11,7 +11,7 @@ type Authorization interface {
 }
 
 type Order interface {
-	Create(userID int, number string) (int, error)
+	Create(userID int, number string) error
 	GetAll(userID int) ([]gofermart.OrdersOut, error)
 }
 

@@ -16,19 +16,19 @@ func NewOrderPostgres(db *sqlx.DB) *OrderPostgres {
 	return &OrderPostgres{db: db}
 }
 
-func (r *OrderPostgres) Create(userID int, number string) (int, error) {
+func (r *OrderPostgres) Create(userID int, number string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
-		return 0, err
+		return err
 	}
 	var id int
 	createOrder := fmt.Sprintf("INSERT INTO %s (number, user_id, status, uploaded_at) VALUES ($1, $2, $3, $4) RETURNING id", ordersTable)
 	row := tx.QueryRow(createOrder, number, userID, "NEW", time.Now())
 	if err := row.Scan(&id); err != nil {
 		tx.Rollback()
-		return 0, err
+		return err
 	}
-	return id, tx.Commit()
+	return tx.Commit()
 }
 
 func (r *OrderPostgres) GetAll(userID int) ([]gofermart.OrdersOut, error) {

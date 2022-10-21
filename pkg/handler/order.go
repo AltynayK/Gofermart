@@ -25,14 +25,12 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.Order.Create(userID, string(input))
+	err = h.services.Order.Create(userID, string(input))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusAccepted, map[string]interface{}{
-		"id": id,
-	})
+	c.AbortWithStatus(http.StatusAccepted)
 
 }
 
