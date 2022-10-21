@@ -19,7 +19,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 	body := c.Request.Body
 	input, _ := ioutil.ReadAll(body)
 	//проверка на корректность ввода с помощью алгоритма Луна
-	num, err := strconv.Atoi(string(input))
+	num, _ := strconv.Atoi(string(input))
 	if !service.Valid(num) {
 		c.AbortWithStatus(http.StatusUnprocessableEntity)
 		return
