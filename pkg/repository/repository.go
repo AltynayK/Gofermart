@@ -15,6 +15,7 @@ type Order interface {
 	GetAll(userID int) ([]gofermart.OrdersOut, error)
 	GetOrderByUserAndNumber(userID int, number int) ([]gofermart.OrdersOut, error)
 	GetOrder(number int) ([]gofermart.OrdersOut, error)
+	GetUserBalance(userID int) ([]gofermart.UserBalance, error)
 }
 
 type Repository struct {

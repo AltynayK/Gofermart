@@ -30,7 +30,7 @@ func NewPostgresDB(config *configs.Config) *sqlx.DB {
 }
 
 func CreateTableUsers(db *sqlx.DB) {
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS users (id serial primary key, login varchar UNIQUE, password varchar, current int)")
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS users (id serial primary key, login varchar UNIQUE, password varchar, current int DEFAULT 0, withdrawn int DEFAULT 0)")
 	if err != nil {
 		fmt.Print(err)
 	}

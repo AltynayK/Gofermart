@@ -62,6 +62,9 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 type getAllOrdersResponse struct {
 	Data []gofermart.OrdersOut `json:"data"`
 }
+type getUserBalance struct {
+	Data []gofermart.UserBalance `json:"data"`
+}
 
 func (h *Handler) receivingOrders(c *gin.Context) {
 	userID, err := getUserID(c)
@@ -83,7 +86,19 @@ func (h *Handler) receivingOrders(c *gin.Context) {
 	})
 }
 func (h *Handler) receivingBalance(c *gin.Context) {
-
+	userID, err := getUserID(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	balance, err := h.services.Order.GetUserBalance(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, getUserBalance{
+		Data: balance,
+	})
 }
 func (h *Handler) withdrawBalance(c *gin.Context) {
 

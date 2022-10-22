@@ -27,3 +27,7 @@ func (s *OrderService) GetOrder(number int) ([]gofermart.OrdersOut, error) {
 func (s *OrderService) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 	return s.repo.GetAll(userID)
 }
+
+func (s *OrderService) GetUserBalance(userID int) ([]gofermart.UserBalance, error) {
+	return s.repo.GetUserBalance(userID)
+}

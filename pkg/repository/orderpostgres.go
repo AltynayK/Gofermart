@@ -51,3 +51,10 @@ func (r *OrderPostgres) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 	return orders, err
 
 }
+
+func (r *OrderPostgres) GetUserBalance(userID int) ([]gofermart.UserBalance, error) {
+	var balance []gofermart.UserBalance
+	query := fmt.Sprintf("SELECT current, withdrawn FROM %s WHERE id = $1", usersTable)
+	err := r.db.Select(&balance, query, userID)
+	return balance, err
+}
