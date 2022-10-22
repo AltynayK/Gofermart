@@ -19,6 +19,12 @@ func (h *Handler) register(c *gin.Context) {
 		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
 	}
+	token, err := h.services.Authorization.GenerateToken(input.Login, input.Password)
+	if err != nil {
+		newErrorResponse(c, http.StatusConflict, err.Error())
+		return
+	}
+	c.Header("Authorization", token)
 	c.JSON(http.StatusOK, input)
 }
 
