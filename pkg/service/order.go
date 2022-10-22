@@ -17,6 +17,13 @@ func (s *OrderService) Create(userID int, number string) error {
 	return s.repo.Create(userID, number)
 }
 
+func (s *OrderService) GetOrderByUserAndNumber(userID int, number int) ([]gofermart.OrdersOut, error) {
+	return s.repo.GetOrderByUserAndNumber(userID, number)
+}
+
+func (s *OrderService) GetOrder(number int) ([]gofermart.OrdersOut, error) {
+	return s.repo.GetOrder(number)
+}
 func (s *OrderService) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 	return s.repo.GetAll(userID)
 }

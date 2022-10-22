@@ -13,6 +13,8 @@ type Authorization interface {
 type Order interface {
 	Create(userID int, number string) error
 	GetAll(userID int) ([]gofermart.OrdersOut, error)
+	GetOrderByUserAndNumber(userID int, number int) ([]gofermart.OrdersOut, error)
+	GetOrder(number int) ([]gofermart.OrdersOut, error)
 }
 
 type Repository struct {

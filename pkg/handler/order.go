@@ -24,20 +24,34 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnprocessableEntity)
 		return
 	}
-
-	//создание нового заказа
-	err = h.services.Order.Create(userID, string(input))
 	//проверка код ответа 200, номер заказа уже был загружен этим пользователем
-	if err != nil && err.Error() == "pq: duplicate key value violates unique constraint \"orders_number_key\"" {
-		c.AbortWithStatus(http.StatusOK)
-		return
-	}
+	orders, err := h.services.Order.GetOrderByUserAndNumber(userID, num)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.AbortWithStatus(http.StatusAccepted)
+	if orders != nil {
+		c.AbortWithStatus(http.StatusOK)
+		return
+	}
+	//проверка код ответа 409, номер заказа уже был загружен другим пользователем
+	order, err := h.services.Order.GetOrder(num)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if order != nil {
+		c.AbortWithStatus(http.StatusConflict)
+		return
+	}
+	//создание нового заказа
+	err = h.services.Order.Create(userID, string(input))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
+	c.AbortWithStatus(http.StatusAccepted)
 }
 
 type getAllOrdersResponse struct {

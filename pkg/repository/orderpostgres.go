@@ -30,7 +30,20 @@ func (r *OrderPostgres) Create(userID int, number string) error {
 	}
 	return tx.Commit()
 }
+func (r *OrderPostgres) GetOrderByUserAndNumber(userID int, number int) ([]gofermart.OrdersOut, error) {
+	var orders []gofermart.OrdersOut
+	query := fmt.Sprintf("SELECT number FROM %s WHERE user_id = $1 AND number=$2", ordersTable)
+	err := r.db.Select(&orders, query, userID, number)
+	return orders, err
 
+}
+func (r *OrderPostgres) GetOrder(number int) ([]gofermart.OrdersOut, error) {
+	var orders []gofermart.OrdersOut
+	query := fmt.Sprintf("SELECT number FROM %s WHERE number=$1", ordersTable)
+	err := r.db.Select(&orders, query, number)
+	return orders, err
+
+}
 func (r *OrderPostgres) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 	var orders []gofermart.OrdersOut
 	query := fmt.Sprintf("SELECT number, uploaded_at FROM %s WHERE user_id = $1", ordersTable)
