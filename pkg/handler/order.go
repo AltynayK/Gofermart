@@ -17,7 +17,12 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 	body := c.Request.Body
-	input, _ := ioutil.ReadAll(body)
+	//проверка код ответа 400, неверный формат запроса
+	input, err := ioutil.ReadAll(body)
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
 	//проверка на корректность ввода с помощью алгоритма Луна
 	num, _ := strconv.Atoi(string(input))
 	if !service.Valid(num) {
