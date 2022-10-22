@@ -25,7 +25,13 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 
+	//создание нового заказа
 	err = h.services.Order.Create(userID, string(input))
+	//проверка код ответа 200, номер заказа уже был загружен этим пользователем
+	if err != nil && err.Error() == "pq: duplicate key value violates unique constraint \"orders_number_key\"" {
+		c.AbortWithStatus(http.StatusOK)
+		return
+	}
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
