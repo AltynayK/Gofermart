@@ -12,10 +12,10 @@ import (
 
 func (h *Handler) loadingOrders(c *gin.Context) {
 	userID, err := getUserID(c)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusUnauthorized, err.Error())
-	// 	return
-	// }
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
 	body := c.Request.Body
 	input, _ := ioutil.ReadAll(body)
 	//проверка на корректность ввода с помощью алгоритма Луна
