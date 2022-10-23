@@ -53,7 +53,7 @@ func (r *OrderPostgres) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 }
 
 func (r *OrderPostgres) PostWithdrawBalance(order gofermart.Withdrawals) (int64, error) {
-	query := `UPDATE orders SET withdrawn=$2, processed_at=$3 WHERE number=$1; `
+	query := fmt.Sprintf("UPDATE %s SET withdrawn=$2, processed_at=$3 WHERE number=$1", ordersTable)
 	res, err := r.db.Exec(query, order.Order, order.Sum, time.Now())
 	if err != nil {
 		return 0, err
@@ -62,7 +62,8 @@ func (r *OrderPostgres) PostWithdrawBalance(order gofermart.Withdrawals) (int64,
 	if err != nil {
 		return 0, err
 	}
-	return count, nil
+	return count, err
+
 }
 
 //получение баланса пользователя

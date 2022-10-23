@@ -11,6 +11,7 @@ import (
 )
 
 func (h *Handler) loadingOrders(c *gin.Context) {
+	c.Set("content-type", "plain/text")
 	userID, err := getUserID(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
@@ -64,6 +65,7 @@ type getAllOrdersResponse struct {
 }
 
 func (h *Handler) receivingOrders(c *gin.Context) {
+	c.Set("content-type", "application/json")
 	userID, err := getUserID(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
@@ -84,6 +86,7 @@ func (h *Handler) receivingOrders(c *gin.Context) {
 }
 
 func (h *Handler) receivingBalance(c *gin.Context) {
+	c.Set("content-type", "application/json")
 	userID, err := getUserID(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
@@ -124,7 +127,17 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-
+	num, _ := strconv.Atoi(string(input.Order))
+	//проверка номера заказа на существование
+	order, err := h.services.Order.GetOrder(num)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if order == nil {
+		c.AbortWithStatus(http.StatusUnprocessableEntity)
+		return
+	}
 	current, err := h.services.Order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -137,7 +150,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 	}
 	count, err := h.services.Order.PostWithdrawBalance(input)
 	if err != nil {
-		newErrorResponse(c, http.StatusConflict, err.Error())
+		newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 	newcurrent := current - input.Sum
