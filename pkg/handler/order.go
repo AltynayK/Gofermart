@@ -62,9 +62,6 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 type getAllOrdersResponse struct {
 	Data []gofermart.OrdersOut `json:"data"`
 }
-type getUserBalance struct {
-	Data []gofermart.UserBalance `json:"data"`
-}
 
 func (h *Handler) receivingOrders(c *gin.Context) {
 	userID, err := getUserID(c)
@@ -85,23 +82,70 @@ func (h *Handler) receivingOrders(c *gin.Context) {
 		Data: orders,
 	})
 }
+
 func (h *Handler) receivingBalance(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	balance, err := h.services.Order.GetUserBalance(userID)
+	current, err := h.services.Order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, getUserBalance{
-		Data: balance,
+	withdrawn, err := h.services.Order.GetUserWithdrawn(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gofermart.UserBalance{
+		Current:   current,
+		Withdrawn: withdrawn,
 	})
 }
-func (h *Handler) withdrawBalance(c *gin.Context) {
 
+type rowsUpdated struct {
+	Data int64 `json:"data"`
+}
+
+func (h *Handler) withdrawBalance(c *gin.Context) {
+	c.Set("content-type", "application/json")
+
+	userID, err := getUserID(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	var input gofermart.Withdrawals
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	current, err := h.services.Order.GetUserCurrent(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	//код 402, на счету недостаточно средств
+	if current < input.Sum {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+	count, err := h.services.Order.PostWithdrawBalance(input)
+	if err != nil {
+		newErrorResponse(c, http.StatusConflict, err.Error())
+		return
+	}
+	newcurrent := current - input.Sum
+	h.services.Order.UpdateUserBalance(userID, newcurrent)
+
+	c.JSON(http.StatusOK, rowsUpdated{
+		Data: count,
+	})
 }
 func (h *Handler) withdrawBalanceHistory(c *gin.Context) {
 

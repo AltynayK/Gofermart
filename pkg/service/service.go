@@ -16,7 +16,11 @@ type Order interface {
 	GetAll(userID int) ([]gofermart.OrdersOut, error)
 	GetOrderByUserAndNumber(userID int, number int) ([]gofermart.OrdersOut, error)
 	GetOrder(number int) ([]gofermart.OrdersOut, error)
-	GetUserBalance(userID int) ([]gofermart.UserBalance, error)
+	//GetUserBalance(userID int) ([]gofermart.UserBalance, error)
+	PostWithdrawBalance(order gofermart.Withdrawals) (int64, error)
+	GetUserCurrent(userID int) (int, error)
+	GetUserWithdrawn(userID int) (int, error)
+	UpdateUserBalance(userID int, current int) (int64, error)
 }
 
 type Service struct {

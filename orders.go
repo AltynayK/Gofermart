@@ -25,7 +25,6 @@ type Withdrawals struct {
 	Sum         int    `json:"sum"`
 	ProcessedAt string `json:"processed_at"`
 }
-
 type OrderBalance struct {
 	Order   string `json:"order"`
 	Status  string `json:"status"`

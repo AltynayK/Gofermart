@@ -52,9 +52,45 @@ func (r *OrderPostgres) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 
 }
 
-func (r *OrderPostgres) GetUserBalance(userID int) ([]gofermart.UserBalance, error) {
-	var balance []gofermart.UserBalance
-	query := fmt.Sprintf("SELECT current, withdrawn FROM %s WHERE id = $1", usersTable)
-	err := r.db.Select(&balance, query, userID)
-	return balance, err
+func (r *OrderPostgres) PostWithdrawBalance(order gofermart.Withdrawals) (int64, error) {
+	query := `UPDATE orders SET withdrawn=$2, processed_at=$3 WHERE number=$1; `
+	res, err := r.db.Exec(query, order.Order, order.Sum, time.Now())
+	if err != nil {
+		return 0, err
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+//получение баланса пользователя
+func (r *OrderPostgres) GetUserCurrent(userID int) (int, error) {
+	row := r.db.QueryRow("SELECT current FROM users WHERE id = $1", userID)
+	data := gofermart.UserBalance{}
+	err := row.Scan(&data.Current)
+	return data.Current, err
+}
+
+//получение общей списанной суммы
+func (r *OrderPostgres) GetUserWithdrawn(userID int) (int, error) {
+	row := r.db.QueryRow("SELECT SUM(withdrawn) FROM orders WHERE user_id = $1", userID)
+	data := gofermart.UserBalance{}
+	err := row.Scan(&data.Withdrawn)
+	return data.Withdrawn, err
+}
+
+//обновление баланса пользователя
+func (r *OrderPostgres) UpdateUserBalance(userID int, current int) (int64, error) {
+	query := `UPDATE users SET current=$2 WHERE id=$1; `
+	res, err := r.db.Exec(query, userID, current)
+	if err != nil {
+		return 0, err
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }

@@ -28,6 +28,22 @@ func (s *OrderService) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 	return s.repo.GetAll(userID)
 }
 
-func (s *OrderService) GetUserBalance(userID int) ([]gofermart.UserBalance, error) {
-	return s.repo.GetUserBalance(userID)
+// func (s *OrderService) GetUserBalance(userID int) ([]gofermart.UserBalance, error) {
+// 	return s.repo.GetUserBalance(userID)
+// }
+
+func (s *OrderService) PostWithdrawBalance(order gofermart.Withdrawals) (int64, error) {
+	return s.repo.PostWithdrawBalance(order)
+}
+
+func (s *OrderService) GetUserCurrent(userID int) (int, error) {
+	return s.repo.GetUserCurrent(userID)
+}
+
+func (s *OrderService) GetUserWithdrawn(userID int) (int, error) {
+	return s.repo.GetUserWithdrawn(userID)
+}
+
+func (s *OrderService) UpdateUserBalance(userID int, current int) (int64, error) {
+	return s.repo.UpdateUserBalance(userID, current)
 }
