@@ -60,10 +60,6 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 	c.AbortWithStatus(http.StatusAccepted)
 }
 
-type getAllOrdersResponse struct {
-	Data []gofermart.OrdersOut `json:"data"`
-}
-
 func (h *Handler) receivingOrders(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {
@@ -79,9 +75,7 @@ func (h *Handler) receivingOrders(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNoContent)
 		return
 	}
-	c.JSON(http.StatusOK, getAllOrdersResponse{
-		Data: orders,
-	})
+	c.JSON(http.StatusOK, orders)
 }
 
 func (h *Handler) receivingBalance(c *gin.Context) {
@@ -106,10 +100,6 @@ func (h *Handler) receivingBalance(c *gin.Context) {
 		Current:   current,
 		Withdrawn: withdrawn,
 	})
-}
-
-type rowsUpdated struct {
-	Data int64 `json:"data"`
 }
 
 func (h *Handler) withdrawBalance(c *gin.Context) {
@@ -155,13 +145,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 	newcurrent := current - input.Sum
 	h.services.Order.UpdateUserBalance(userID, newcurrent)
 
-	c.JSON(http.StatusOK, rowsUpdated{
-		Data: count,
-	})
-}
-
-type getAllWithdrawalsResponse struct {
-	Data []gofermart.Withdrawals `json:"data"`
+	c.JSON(http.StatusOK, count)
 }
 
 func (h *Handler) withdrawBalanceHistory(c *gin.Context) {
@@ -181,7 +165,5 @@ func (h *Handler) withdrawBalanceHistory(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNoContent)
 		return
 	}
-	c.JSON(http.StatusOK, getAllWithdrawalsResponse{
-		Data: withdrawals,
-	})
+	c.JSON(http.StatusOK, withdrawals)
 }
