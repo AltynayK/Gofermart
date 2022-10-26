@@ -103,3 +103,17 @@ func (r *OrderPostgres) GetAllWithdrawals(userID int) ([]gofermart.Withdrawals, 
 	return withdrawals, err
 
 }
+
+func (r *OrderPostgres) PostBalance(order gofermart.OrderBalance) (int64, error) {
+	query := fmt.Sprintf("UPDATE %s SET status=$2, accrual=$3 WHERE number=$1", ordersTable)
+	res, err := r.db.Exec(query, order.Order, order.Status, order.Accrual)
+	if err != nil {
+		return 0, err
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return count, err
+
+}

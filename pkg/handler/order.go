@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
 	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 	"github.com/gin-gonic/gin"
 )
@@ -56,7 +59,28 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	config := configs.NewConfig()
+	var datas gofermart.OrderBalance
+	resp, err := http.Get("http://" + config.RunAddress + "/api/orders/" + string(input))
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = json.Unmarshal(data, &datas)
+
+	_, err = h.services.Order.PostBalance(datas)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	//fmt.Print(string(data))
 	c.AbortWithStatus(http.StatusAccepted)
 }
 

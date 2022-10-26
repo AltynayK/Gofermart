@@ -51,3 +51,8 @@ func (s *OrderService) UpdateUserBalance(userID int, current int) (int64, error)
 func (s *OrderService) GetAllWithdrawals(userID int) ([]gofermart.Withdrawals, error) {
 	return s.repo.GetAllWithdrawals(userID)
 }
+
+func (s *OrderService) PostBalance(order gofermart.OrderBalance) (int64, error) {
+	return s.repo.PostBalance(order)
+
+}
