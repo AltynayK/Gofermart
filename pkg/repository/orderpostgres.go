@@ -46,7 +46,7 @@ func (r *OrderPostgres) GetOrder(number int) ([]gofermart.OrdersOut, error) {
 }
 func (r *OrderPostgres) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 	var orders []gofermart.OrdersOut
-	query := fmt.Sprintf("SELECT number, uploaded_at FROM %s WHERE user_id = $1 ORDER BY uploaded_at DESC", ordersTable)
+	query := fmt.Sprintf("SELECT number, status, uploaded_at FROM %s WHERE user_id = $1 ORDER BY uploaded_at DESC", ordersTable)
 	err := r.db.Select(&orders, query, userID)
 	return orders, err
 
