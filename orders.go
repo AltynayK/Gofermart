@@ -21,12 +21,12 @@ type UserBalance struct {
 }
 
 type Withdrawals struct {
-	Order       string `json:"order"`
-	Sum         int    `json:"sum"`
-	ProcessedAt string `json:"processed_at"`
+	Order       string `json:"order" db:"number"`
+	Sum         int    `json:"sum" db:"withdrawn"`
+	ProcessedAt string `json:"processed_at" db:"processed_at"`
 }
 type OrderBalance struct {
-	Order   string `json:"order"`
+	Order   string `json:"order" `
 	Status  string `json:"status"`
 	Accrual string `json:"accrual"`
 }

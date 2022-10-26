@@ -65,7 +65,6 @@ type getAllOrdersResponse struct {
 }
 
 func (h *Handler) receivingOrders(c *gin.Context) {
-	c.Set("content-type", "application/json")
 	userID, err := getUserID(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
@@ -160,6 +159,29 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		Data: count,
 	})
 }
-func (h *Handler) withdrawBalanceHistory(c *gin.Context) {
 
+type getAllWithdrawalsResponse struct {
+	Data []gofermart.Withdrawals `json:"data"`
+}
+
+func (h *Handler) withdrawBalanceHistory(c *gin.Context) {
+	c.Set("content-type", "application/json")
+
+	userID, err := getUserID(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	withdrawals, err := h.services.Order.GetAllWithdrawals(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if withdrawals == nil {
+		c.AbortWithStatus(http.StatusNoContent)
+		return
+	}
+	c.JSON(http.StatusOK, getAllWithdrawalsResponse{
+		Data: withdrawals,
+	})
 }

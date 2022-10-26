@@ -20,6 +20,7 @@ type Order interface {
 	GetUserCurrent(userID int) (int, error)
 	GetUserWithdrawn(userID int) (int, error)
 	UpdateUserBalance(userID int, current int) (int64, error)
+	GetAllWithdrawals(userID int) ([]gofermart.Withdrawals, error)
 }
 
 type Repository struct {
