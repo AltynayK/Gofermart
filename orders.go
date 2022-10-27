@@ -28,5 +28,5 @@ type Withdrawals struct {
 type OrderBalance struct {
 	Order   string `json:"order" `
 	Status  string `json:"status"`
-	Accrual string `json:"accrual"`
+	Accrual int    `json:"accrual"`
 }
