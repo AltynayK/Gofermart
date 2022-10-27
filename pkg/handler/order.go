@@ -161,12 +161,7 @@ func (h *Handler) withdrawBalanceHistory(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	for _, w := range withdrawals {
-		if w.Sum == 0 {
-			c.AbortWithStatus(http.StatusNoContent)
-			return
-		}
-	}
+
 	if withdrawals == nil {
 		c.AbortWithStatus(http.StatusNoContent)
 		return
