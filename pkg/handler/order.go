@@ -61,6 +61,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 	}
 	config := configs.NewConfig()
 
+	//Взаимодействие с системой расчёта начислений баллов лояльности
 	var datas gofermart.OrderBalance
 	resp, err := http.Get("http://" + config.RunAddress + "/api/orders/" + string(input))
 	if err != nil {
@@ -82,6 +83,19 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 
+	current, err := h.services.Order.GetUserCurrent(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	newcurrent := current + datas.Accrual
+
+	rr, err := h.services.Order.UpdateUserBalance(userID, newcurrent)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	fmt.Print(rr)
 	c.AbortWithStatus(http.StatusAccepted)
 }
 
