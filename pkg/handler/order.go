@@ -73,6 +73,9 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 	}
 
 	err = json.Unmarshal(responseBody, &datas)
+	if err != nil {
+		fmt.Print(err)
+	}
 	_, err = h.services.Order.PostBalance(datas)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
