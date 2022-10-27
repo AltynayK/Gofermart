@@ -28,7 +28,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		api.GET("/orders", h.receivingOrders)
 		api.GET("/balance", h.receivingBalance)
 		api.POST("/balance/withdraw", h.withdrawBalance)
-		api.GET("/balance/withdrawals", h.withdrawBalanceHistory)
+		api.GET("/withdrawals", h.withdrawBalanceHistory)
 
 	}
 
