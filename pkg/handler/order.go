@@ -26,7 +26,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 	}
 	//проверка на корректность ввода с помощью алгоритма Луна
 	num, _ := strconv.Atoi(string(input))
-	if !service.Valid(num) {
+	if !service.ValidByLuhn(num) {
 		c.AbortWithStatus(http.StatusUnprocessableEntity)
 		return
 	}

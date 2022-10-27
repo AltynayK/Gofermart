@@ -24,7 +24,7 @@ func (h *Handler) register(c *gin.Context) {
 		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
 	}
-	c.Header("Authorization", token)
+	c.Header(authorizationHeader, token)
 	c.JSON(http.StatusOK, input)
 }
 
@@ -45,7 +45,7 @@ func (h *Handler) login(c *gin.Context) {
 		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
 	}
-	c.Header("Authorization", token)
+	c.Header(authorizationHeader, token)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"token": token,
 	})
