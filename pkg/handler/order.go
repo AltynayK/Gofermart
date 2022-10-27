@@ -1,14 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 
 	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
-	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 	"github.com/gin-gonic/gin"
 )
@@ -59,43 +56,6 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	config := configs.NewConfig()
-
-	//Взаимодействие с системой расчёта начислений баллов лояльности
-	var datas gofermart.OrderBalance
-	resp, err := http.Get("http://" + config.RunAddress + "/api/orders/" + string(input))
-	if err != nil {
-		fmt.Print(err)
-	}
-	defer resp.Body.Close()
-	responseBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	err = json.Unmarshal(responseBody, &datas)
-	if err != nil {
-		fmt.Print(err)
-	}
-	_, err = h.services.Order.PostBalance(datas)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	current, err := h.services.Order.GetUserCurrent(userID)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	newcurrent := current + datas.Accrual
-
-	rr, err := h.services.Order.UpdateUserBalance(userID, newcurrent)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	fmt.Print(rr)
 	c.AbortWithStatus(http.StatusAccepted)
 }
 
