@@ -10,13 +10,19 @@ type Server struct {
 	httpServer *http.Server
 }
 
+const (
+	readTimeout    = 10 * time.Second
+	writeTimeout   = 10 * time.Second
+	maxHeaderBytes = 1 << 20
+)
+
 func (s *Server) Run(RunAddress string, handler http.Handler) error {
 	s.httpServer = &http.Server{
 		Addr:           RunAddress,
 		Handler:        handler,
-		MaxHeaderBytes: 1 << 20,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: maxHeaderBytes,
+		ReadTimeout:    readTimeout,
+		WriteTimeout:   writeTimeout,
 	}
 	return s.httpServer.ListenAndServe()
 }
