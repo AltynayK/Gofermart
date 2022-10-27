@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -30,29 +30,29 @@ func (r *OrderPostgres) Create(userID int, number string) error {
 	}
 	return tx.Commit()
 }
-func (r *OrderPostgres) GetOrderByUserAndNumber(userID int, number int) ([]gofermart.OrdersOut, error) {
-	var orders []gofermart.OrdersOut
+func (r *OrderPostgres) GetOrderByUserAndNumber(userID int, number int) ([]models.OrdersOut, error) {
+	var orders []models.OrdersOut
 	query := fmt.Sprintf("SELECT number FROM %s WHERE user_id = $1 AND number=$2", ordersTable)
 	err := r.db.Select(&orders, query, userID, number)
 	return orders, err
 
 }
-func (r *OrderPostgres) GetOrder(number int) ([]gofermart.OrdersOut, error) {
-	var orders []gofermart.OrdersOut
+func (r *OrderPostgres) GetOrder(number int) ([]models.OrdersOut, error) {
+	var orders []models.OrdersOut
 	query := fmt.Sprintf("SELECT number FROM %s WHERE number=$1", ordersTable)
 	err := r.db.Select(&orders, query, number)
 	return orders, err
 
 }
-func (r *OrderPostgres) GetAll(userID int) ([]gofermart.OrdersOut, error) {
-	var orders []gofermart.OrdersOut
+func (r *OrderPostgres) GetAll(userID int) ([]models.OrdersOut, error) {
+	var orders []models.OrdersOut
 	query := fmt.Sprintf("SELECT number, status, uploaded_at FROM %s WHERE user_id = $1 ORDER BY uploaded_at DESC", ordersTable)
 	err := r.db.Select(&orders, query, userID)
 	return orders, err
 
 }
 
-func (r *OrderPostgres) PostWithdrawBalance(order gofermart.Withdrawals) (int64, error) {
+func (r *OrderPostgres) PostWithdrawBalance(order models.Withdrawals) (int64, error) {
 	query := fmt.Sprintf("UPDATE %s SET withdrawn=$2, processed_at=$3 WHERE number=$1", ordersTable)
 	res, err := r.db.Exec(query, order.Order, order.Sum, time.Now())
 	if err != nil {
@@ -69,7 +69,7 @@ func (r *OrderPostgres) PostWithdrawBalance(order gofermart.Withdrawals) (int64,
 //получение баланса пользователя
 func (r *OrderPostgres) GetUserCurrent(userID int) (float32, error) {
 	row := r.db.QueryRow("SELECT current FROM users WHERE id = $1", userID)
-	data := gofermart.UserBalance{}
+	data := models.UserBalance{}
 	err := row.Scan(&data.Current)
 	return data.Current, err
 }
@@ -77,7 +77,7 @@ func (r *OrderPostgres) GetUserCurrent(userID int) (float32, error) {
 //получение общей списанной суммы
 func (r *OrderPostgres) GetUserWithdrawn(userID int) (float32, error) {
 	row := r.db.QueryRow("SELECT SUM(withdrawn) FROM orders WHERE user_id = $1", userID)
-	data := gofermart.UserBalance{}
+	data := models.UserBalance{}
 	err := row.Scan(&data.Withdrawn)
 	return data.Withdrawn, err
 }
@@ -96,15 +96,15 @@ func (r *OrderPostgres) UpdateUserBalance(userID int, current float32) (int64, e
 	return count, nil
 }
 
-func (r *OrderPostgres) GetAllWithdrawals(userID int) ([]gofermart.Withdrawals, error) {
-	var withdrawals []gofermart.Withdrawals
+func (r *OrderPostgres) GetAllWithdrawals(userID int) ([]models.Withdrawals, error) {
+	var withdrawals []models.Withdrawals
 	query := fmt.Sprintf("SELECT number, withdrawn, processed_at FROM %s WHERE user_id = $1 ORDER BY processed_at DESC", ordersTable)
 	err := r.db.Select(&withdrawals, query, userID)
 	return withdrawals, err
 
 }
 
-func (r *OrderPostgres) PostBalance(order gofermart.OrderBalance) (int64, error) {
+func (r *OrderPostgres) PostBalance(order models.OrderBalance) (int64, error) {
 	query := fmt.Sprintf("UPDATE %s SET status=$2, accrual=$3 WHERE number=$1", ordersTable)
 	res, err := r.db.Exec(query, order.Order, order.Status, order.Accrual)
 	if err != nil {

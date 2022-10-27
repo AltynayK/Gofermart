@@ -3,13 +3,13 @@ package handler
 import (
 	"net/http"
 
-	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) register(c *gin.Context) {
 	c.Set("content-type", "application/json")
-	var input gofermart.User
+	var input models.User
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return

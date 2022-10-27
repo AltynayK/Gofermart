@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 	"github.com/gin-gonic/gin"
 )
@@ -96,7 +96,7 @@ func (h *Handler) receivingBalance(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gofermart.UserBalance{
+	c.JSON(http.StatusOK, models.UserBalance{
 		Current:   current,
 		Withdrawn: withdrawn,
 	})
@@ -111,7 +111,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		return
 	}
 
-	var input gofermart.Withdrawals
+	var input models.Withdrawals
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return

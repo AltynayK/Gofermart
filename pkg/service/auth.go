@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -29,7 +29,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user gofermart.User) error {
+func (s *AuthService) CreateUser(user models.User) error {
 	user.Password = s.generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }

@@ -1,4 +1,4 @@
-package gofermart
+package handler
 
 import (
 	"context"

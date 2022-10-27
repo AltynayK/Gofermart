@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -17,7 +17,7 @@ func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 
 }
 
-func (r *AuthPostgres) CreateUser(user gofermart.User) error {
+func (r *AuthPostgres) CreateUser(user models.User) error {
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s (login, password) values ($1, $2) RETURNING id", usersTable)
 	row := r.db.QueryRow(query, user.Login, user.Password)
@@ -27,8 +27,8 @@ func (r *AuthPostgres) CreateUser(user gofermart.User) error {
 	return nil
 }
 
-func (r *AuthPostgres) GetUser(login, password string) (gofermart.User, error) {
-	var user gofermart.User
+func (r *AuthPostgres) GetUser(login, password string) (models.User, error) {
+	var user models.User
 	query := fmt.Sprintf("SELECT id FROM %s WHERE login=$1 AND password=$2", usersTable)
 	err := r.db.Get(&user, query, login, password)
 	return user, err

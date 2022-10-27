@@ -1,4 +1,4 @@
-package gofermart
+package models
 
 type User struct {
 	ID       int     `json:"-" db:"id"`

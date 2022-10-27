@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 
-	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
 	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/handler"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
@@ -16,7 +15,7 @@ func main() {
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
-	srv := new(gofermart.Server)
+	srv := new(handler.Server)
 	if err := srv.Run(config.RunAddress, handlers.InitRoutes()); err != nil {
 		fmt.Print(err)
 	}

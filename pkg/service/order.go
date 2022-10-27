@@ -1,7 +1,7 @@
 package service
 
 import (
-	gofermart "github.com/AltynayK/go-musthave-diploma-tpl"
+	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
 )
 
@@ -17,14 +17,14 @@ func (s *OrderService) Create(userID int, number string) error {
 	return s.repo.Create(userID, number)
 }
 
-func (s *OrderService) GetOrderByUserAndNumber(userID int, number int) ([]gofermart.OrdersOut, error) {
+func (s *OrderService) GetOrderByUserAndNumber(userID int, number int) ([]models.OrdersOut, error) {
 	return s.repo.GetOrderByUserAndNumber(userID, number)
 }
 
-func (s *OrderService) GetOrder(number int) ([]gofermart.OrdersOut, error) {
+func (s *OrderService) GetOrder(number int) ([]models.OrdersOut, error) {
 	return s.repo.GetOrder(number)
 }
-func (s *OrderService) GetAll(userID int) ([]gofermart.OrdersOut, error) {
+func (s *OrderService) GetAll(userID int) ([]models.OrdersOut, error) {
 	return s.repo.GetAll(userID)
 }
 
@@ -32,7 +32,7 @@ func (s *OrderService) GetAll(userID int) ([]gofermart.OrdersOut, error) {
 // 	return s.repo.GetUserBalance(userID)
 // }
 
-func (s *OrderService) PostWithdrawBalance(order gofermart.Withdrawals) (int64, error) {
+func (s *OrderService) PostWithdrawBalance(order models.Withdrawals) (int64, error) {
 	return s.repo.PostWithdrawBalance(order)
 }
 
@@ -48,11 +48,11 @@ func (s *OrderService) UpdateUserBalance(userID int, current float32) (int64, er
 	return s.repo.UpdateUserBalance(userID, current)
 }
 
-func (s *OrderService) GetAllWithdrawals(userID int) ([]gofermart.Withdrawals, error) {
+func (s *OrderService) GetAllWithdrawals(userID int) ([]models.Withdrawals, error) {
 	return s.repo.GetAllWithdrawals(userID)
 }
 
-func (s *OrderService) PostBalance(order gofermart.OrderBalance) (int64, error) {
+func (s *OrderService) PostBalance(order models.OrderBalance) (int64, error) {
 	return s.repo.PostBalance(order)
 
 }

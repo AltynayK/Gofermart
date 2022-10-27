@@ -1,4 +1,4 @@
-package gofermart
+package models
 
 type Orders struct {
 	ID         int     `json:"id" db:"id"`
