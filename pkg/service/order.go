@@ -36,15 +36,15 @@ func (s *OrderService) PostWithdrawBalance(order gofermart.Withdrawals) (int64, 
 	return s.repo.PostWithdrawBalance(order)
 }
 
-func (s *OrderService) GetUserCurrent(userID int) (int, error) {
+func (s *OrderService) GetUserCurrent(userID int) (float32, error) {
 	return s.repo.GetUserCurrent(userID)
 }
 
-func (s *OrderService) GetUserWithdrawn(userID int) (int, error) {
+func (s *OrderService) GetUserWithdrawn(userID int) (float32, error) {
 	return s.repo.GetUserWithdrawn(userID)
 }
 
-func (s *OrderService) UpdateUserBalance(userID int, current int) (int64, error) {
+func (s *OrderService) UpdateUserBalance(userID int, current float32) (int64, error) {
 	return s.repo.UpdateUserBalance(userID, current)
 }
 

@@ -159,7 +159,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		return
 	}
 	//код 402, на счету недостаточно средств
-	if current < input.Sum {
+	if current < float32(input.Sum) {
 		c.AbortWithStatus(http.StatusForbidden)
 		return
 	}
@@ -168,7 +168,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	newcurrent := current - input.Sum
+	newcurrent := current - float32(input.Sum)
 	h.services.Order.UpdateUserBalance(userID, newcurrent)
 
 	c.JSON(http.StatusOK, count)

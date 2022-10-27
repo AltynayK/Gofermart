@@ -18,9 +18,9 @@ type Order interface {
 	GetOrder(number int) ([]gofermart.OrdersOut, error)
 	//GetUserBalance(userID int) ([]gofermart.UserBalance, error)
 	PostWithdrawBalance(order gofermart.Withdrawals) (int64, error)
-	GetUserCurrent(userID int) (int, error)
-	GetUserWithdrawn(userID int) (int, error)
-	UpdateUserBalance(userID int, current int) (int64, error)
+	GetUserCurrent(userID int) (float32, error)
+	GetUserWithdrawn(userID int) (float32, error)
+	UpdateUserBalance(userID int, current float32) (int64, error)
 	GetAllWithdrawals(userID int) ([]gofermart.Withdrawals, error)
 	PostBalance(order gofermart.OrderBalance) (int64, error)
 }

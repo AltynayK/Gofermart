@@ -67,7 +67,7 @@ func (r *OrderPostgres) PostWithdrawBalance(order gofermart.Withdrawals) (int64,
 }
 
 //получение баланса пользователя
-func (r *OrderPostgres) GetUserCurrent(userID int) (int, error) {
+func (r *OrderPostgres) GetUserCurrent(userID int) (float32, error) {
 	row := r.db.QueryRow("SELECT current FROM users WHERE id = $1", userID)
 	data := gofermart.UserBalance{}
 	err := row.Scan(&data.Current)
@@ -75,7 +75,7 @@ func (r *OrderPostgres) GetUserCurrent(userID int) (int, error) {
 }
 
 //получение общей списанной суммы
-func (r *OrderPostgres) GetUserWithdrawn(userID int) (int, error) {
+func (r *OrderPostgres) GetUserWithdrawn(userID int) (float32, error) {
 	row := r.db.QueryRow("SELECT SUM(withdrawn) FROM orders WHERE user_id = $1", userID)
 	data := gofermart.UserBalance{}
 	err := row.Scan(&data.Withdrawn)
@@ -83,7 +83,7 @@ func (r *OrderPostgres) GetUserWithdrawn(userID int) (int, error) {
 }
 
 //обновление баланса пользователя
-func (r *OrderPostgres) UpdateUserBalance(userID int, current int) (int64, error) {
+func (r *OrderPostgres) UpdateUserBalance(userID int, current float32) (int64, error) {
 	query := `UPDATE users SET current=$2 WHERE id=$1; `
 	res, err := r.db.Exec(query, userID, current)
 	if err != nil {

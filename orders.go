@@ -1,32 +1,32 @@
 package gofermart
 
 type Orders struct {
-	ID         int    `json:"id" db:"id"`
-	Number     string `json:"number" db:"number"`
-	UserID     int    `json:"user_id" db:"user_id"`
-	Status     string `json:"status" db:"status"`
-	Accrual    int    `json:"accrual" db:"accrual"`
-	UploadedAt string `json:"uploaded_at" db:"uploaded_at"`
-	Withdrawn  int    `json:"withdrawn" db:"withdrawn"`
+	ID         int     `json:"id" db:"id"`
+	Number     string  `json:"number" db:"number"`
+	UserID     int     `json:"user_id" db:"user_id"`
+	Status     string  `json:"status" db:"status"`
+	Accrual    float32 `json:"accrual" db:"accrual"`
+	UploadedAt string  `json:"uploaded_at" db:"uploaded_at"`
+	Withdrawn  float32 `json:"withdrawn" db:"withdrawn"`
 }
 type OrdersOut struct {
-	Number     string `json:"number" db:"number"`
-	Status     string `json:"status" db:"status"`
-	Accrual    int    `json:"accrual" db:"accrual"`
-	UploadedAt string `json:"uploaded_at" db:"uploaded_at"`
+	Number     string  `json:"number" db:"number"`
+	Status     string  `json:"status" db:"status"`
+	Accrual    float32 `json:"accrual" db:"accrual"`
+	UploadedAt string  `json:"uploaded_at" db:"uploaded_at"`
 }
 type UserBalance struct {
-	Current   int `json:"current"`
-	Withdrawn int `json:"withdrawn"`
+	Current   float32 `json:"current"`
+	Withdrawn float32 `json:"withdrawn"`
 }
 
 type Withdrawals struct {
-	Order       string `json:"order" db:"number"`
-	Sum         int    `json:"sum" db:"withdrawn"`
-	ProcessedAt string `json:"processed_at" db:"processed_at"`
+	Order       string  `json:"order" db:"number"`
+	Sum         float32 `json:"sum" db:"withdrawn"`
+	ProcessedAt string  `json:"processed_at" db:"processed_at"`
 }
 type OrderBalance struct {
-	Order   string `json:"order" `
-	Status  string `json:"status"`
-	Accrual int    `json:"accrual"`
+	Order   string  `json:"order" `
+	Status  string  `json:"status"`
+	Accrual float32 `json:"accrual"`
 }
