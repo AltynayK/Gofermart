@@ -124,7 +124,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		return
 	}
 	if order == nil {
-		c.AbortWithStatus(http.StatusUnprocessableEntity)
+		c.AbortWithStatus(http.StatusOK)
 		return
 	}
 	current, err := h.services.Order.GetUserCurrent(userID)
