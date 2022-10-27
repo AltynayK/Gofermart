@@ -83,7 +83,6 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 }
 
 func (h *Handler) receivingOrders(c *gin.Context) {
-	c.Set("content-type", "application/json")
 	userID, err := getUserID(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
