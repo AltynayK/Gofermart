@@ -69,15 +69,16 @@ func (h *Handler) WriteOrderToChan(processingOrder string) {
 }
 
 func (h *Handler) GetOrderAccrual() {
-	var data string
+	//config := configs.NewConfig()
+	var orderNumber string
 	for i := range h.queueForAccrual {
-		data = i
+		orderNumber = i
 		var datas models.OrderBalance
-		resp, err := http.Get("http://localhost:8000" + "/api/orders/" + data)
+		resp, err := http.Get("http://" + h.config.RunAddress + "/api/orders/" + orderNumber)
 		if err != nil {
 			fmt.Print(err)
 		}
-		defer resp.Body.Close()
+		//defer resp.Body.Close()
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
@@ -87,13 +88,14 @@ func (h *Handler) GetOrderAccrual() {
 		if err != nil {
 			fmt.Print(err)
 		}
+		//fmt.Print(string(responseBody))
 		_, err = h.services.Order.PostBalance(datas)
 		if err != nil {
 			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		userID, err := h.services.Order.GetOrderUserID(data)
+		userID, err := h.services.Order.GetOrderUserID(orderNumber)
 		//Взаимодействие с системой расчёта начислений баллов лояльности
 		if err != nil {
 			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
