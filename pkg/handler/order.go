@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 	"github.com/gin-gonic/gin"
@@ -70,12 +69,11 @@ func (h *Handler) WriteOrderToChan(processingOrder string) {
 }
 
 func (h *Handler) GetOrderAccrual() {
-	config := configs.NewConfig()
 	var data string
 	for i := range h.queueForAccrual {
 		data = i
 		var datas models.OrderBalance
-		resp, err := http.Get("http://" + config.RunAddress + "/api/orders/" + data)
+		resp, err := http.Get("http://" + h.config.RunAddress + "/api/orders/" + data)
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -89,7 +87,6 @@ func (h *Handler) GetOrderAccrual() {
 		if err != nil {
 			fmt.Print(err)
 		}
-
 		_, err = h.services.Order.PostBalance(datas)
 		if err != nil {
 			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
