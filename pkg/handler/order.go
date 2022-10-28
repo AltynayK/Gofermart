@@ -195,15 +195,14 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		c.AbortWithStatus(http.StatusForbidden)
 		return
 	}
-	count, err := h.services.Order.PostWithdrawBalance(input)
+	_, err = h.services.Order.PostWithdrawBalance(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 	newcurrent := current - float32(input.Sum)
 	h.services.Order.UpdateUserBalance(userID, newcurrent)
-
-	c.JSON(http.StatusOK, count)
+	c.AbortWithStatus(http.StatusOK)
 }
 
 func (h *Handler) withdrawBalanceHistory(c *gin.Context) {

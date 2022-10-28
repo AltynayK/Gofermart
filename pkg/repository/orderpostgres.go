@@ -98,7 +98,7 @@ func (r *OrderPostgres) UpdateUserBalance(userID int, current float32) (int64, e
 
 func (r *OrderPostgres) GetAllWithdrawals(userID int) ([]models.Withdrawals, error) {
 	var withdrawals []models.Withdrawals
-	query := fmt.Sprintf("SELECT number, withdrawn, processed_at FROM %s WHERE user_id = $1 ORDER BY processed_at DESC", ordersTable)
+	query := fmt.Sprintf("SELECT number, withdrawn, processed_at FROM %s WHERE user_id = $1 ORDER BY processed_at ASC", ordersTable)
 	err := r.db.Select(&withdrawals, query, userID)
 	return withdrawals, err
 
