@@ -21,7 +21,8 @@ func init() {
 	//increment#5
 	flag.StringVar(&RunAddress, "a", "127.0.0.1:8080", "RunAddress - адрес запуска HTTP-сервера")
 	flag.StringVar(&AccrualSystemAddress, "r", "", "AccrualSystemAddress")
-	flag.StringVar(&DatabaseURI, "d", "host=localhost port=5432 user=altynay password=password dbname=somedb sslmode=disable", "DatabaseURI")
+	//flag.StringVar(&DatabaseURI, "d", "host=localhost port=5432 user=altynay password=password dbname=somedb sslmode=disable", "DatabaseURI")
+	flag.StringVar(&DatabaseURI, "d", "", "DatabaseURI")
 	//flag.StringVar(&DatabaseURI, "d", "", "DatabaseURI")
 }
 
