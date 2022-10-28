@@ -1,22 +1,21 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os/signal"
+	"syscall"
 
-	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/handler"
-	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
-	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 )
 
 func main() {
-	config := configs.NewConfig()
-	db := repository.NewPostgresDB(config)
-	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
-	handlers := handler.NewHandler(services)
+	//config := configs.NewConfig()
+	handlers := handler.NewHandler()
 	srv := new(handler.Server)
-	if err := srv.Run(config.RunAddress, handlers.InitRoutes()); err != nil {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	if err := srv.Run(ctx, handlers, handlers.InitRoutes()); err != nil {
 		fmt.Print(err)
 	}
 }

@@ -117,3 +117,10 @@ func (r *OrderPostgres) PostBalance(order models.OrderBalance) (int64, error) {
 	return count, err
 
 }
+
+func (r *OrderPostgres) GetOrderUserID(number string) (int, error) {
+	row := r.db.QueryRow("SELECT user_id FROM orders WHERE number = $1", number)
+	userID := models.Orders{}
+	err := row.Scan(&userID.UserID)
+	return userID.UserID, err
+}

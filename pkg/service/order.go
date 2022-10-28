@@ -56,3 +56,8 @@ func (s *OrderService) PostBalance(order models.OrderBalance) (int64, error) {
 	return s.repo.PostBalance(order)
 
 }
+
+func (s *OrderService) GetOrderUserID(number string) (int, error) {
+	return s.repo.GetOrderUserID(number)
+
+}

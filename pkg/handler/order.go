@@ -1,10 +1,13 @@
 package handler
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 
+	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 	"github.com/gin-gonic/gin"
@@ -24,6 +27,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
+
 	//проверка на корректность ввода с помощью алгоритма Луна
 	num, _ := strconv.Atoi(string(input))
 	if !service.ValidByLuhn(num) {
@@ -56,7 +60,62 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	h.WriteOrderToChan(string(input))
+
 	c.AbortWithStatus(http.StatusAccepted)
+}
+func (h *Handler) WriteOrderToChan(processingOrder string) {
+	h.queueForAccrual <- processingOrder
+
+}
+
+func (h *Handler) GetOrderAccrual() {
+	config := configs.NewConfig()
+	var data string
+	for i := range h.queueForAccrual {
+		data = i
+		var datas models.OrderBalance
+		resp, err := http.Get("http://" + config.RunAddress + "/api/orders/" + data)
+		if err != nil {
+			fmt.Print(err)
+		}
+		defer resp.Body.Close()
+		responseBody, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		err = json.Unmarshal(responseBody, &datas)
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		_, err = h.services.Order.PostBalance(datas)
+		if err != nil {
+			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		userID, err := h.services.Order.GetOrderUserID(data)
+		//Взаимодействие с системой расчёта начислений баллов лояльности
+		if err != nil {
+			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		current, err := h.services.Order.GetUserCurrent(userID)
+		if err != nil {
+			//newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		newcurrent := current + datas.Accrual
+
+		rr, err := h.services.Order.UpdateUserBalance(userID, newcurrent)
+		if err != nil {
+			//newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		fmt.Print(rr)
+	}
 }
 
 func (h *Handler) receivingOrders(c *gin.Context) {

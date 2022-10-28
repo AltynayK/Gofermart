@@ -22,6 +22,7 @@ type Order interface {
 	UpdateUserBalance(userID int, current float32) (int64, error)
 	GetAllWithdrawals(userID int) ([]models.Withdrawals, error)
 	PostBalance(order models.OrderBalance) (int64, error)
+	GetOrderUserID(number string) (int, error)
 }
 
 type Repository struct {
