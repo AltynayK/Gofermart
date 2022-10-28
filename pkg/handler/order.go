@@ -79,11 +79,17 @@ func (h *Handler) GetOrderAccrual() {
 			fmt.Print(err)
 		}
 		//
+		defer func() {
+			err := resp.Body.Close()
+			if err != nil {
+				fmt.Print(err)
+			}
+		}()
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
 		}
-		defer resp.Body.Close()
+
 		err = json.Unmarshal(responseBody, &datas)
 		if err != nil {
 			fmt.Print(err)
