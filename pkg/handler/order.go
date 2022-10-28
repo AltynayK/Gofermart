@@ -74,7 +74,7 @@ func (h *Handler) GetOrderAccrual() {
 	for i := range h.queueForAccrual {
 		orderNumber = i
 		var datas models.OrderBalance
-		resp, err := http.Get("http://" + h.config.RunAddress + "/api/orders/" + orderNumber)
+		resp, err := http.Get("http://" + h.config.AccrualSystemAddress + "/api/orders/" + orderNumber)
 		if err != nil {
 			fmt.Print(err)
 		}
