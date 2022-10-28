@@ -79,9 +79,6 @@ func (h *Handler) GetOrderAccrual() {
 			fmt.Print(err)
 		}
 		//
-		if resp.StatusCode == http.StatusTooManyRequests {
-			h.queueForAccrual <- orderNumber
-		}
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
@@ -94,6 +91,7 @@ func (h *Handler) GetOrderAccrual() {
 		//fmt.Print(string(responseBody))
 		_, err = h.services.Order.PostBalance(datas)
 		if err != nil {
+			fmt.Print(err)
 			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -101,6 +99,7 @@ func (h *Handler) GetOrderAccrual() {
 		userID, err := h.services.Order.GetOrderUserID(orderNumber)
 		//Взаимодействие с системой расчёта начислений баллов лояльности
 		if err != nil {
+			fmt.Print(err)
 			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -111,12 +110,13 @@ func (h *Handler) GetOrderAccrual() {
 		}
 		newcurrent := current + datas.Accrual
 
-		rr, err := h.services.Order.UpdateUserBalance(userID, newcurrent)
+		_, err = h.services.Order.UpdateUserBalance(userID, newcurrent)
 		if err != nil {
+			fmt.Print(err)
 			//newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
-		fmt.Print(rr)
+
 	}
 
 }
