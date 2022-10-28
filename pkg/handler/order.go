@@ -174,17 +174,25 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	//проверка на корректность ввода с помощью алгоритма Луна
 	num, _ := strconv.Atoi(string(input.Order))
+	if !service.ValidByLuhn(num) {
+		c.AbortWithStatus(http.StatusUnprocessableEntity)
+		return
+	}
 	//проверка номера заказа на существование
-	order, err := h.services.Order.GetOrder(num)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if order == nil {
-		c.AbortWithStatus(http.StatusOK)
-		return
-	}
+	//num, _ := strconv.Atoi(string(input.Order))
+
+	// order, err := h.services.Order.GetOrder(num)
+	// if err != nil {
+	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
+	// if order == nil {
+	// 	c.AbortWithStatus(http.StatusOK)
+	// 	return
+	// }
 	current, err := h.services.Order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
