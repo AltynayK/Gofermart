@@ -77,7 +77,6 @@ func (h *Handler) GetOrderAccrual() {
 		if err != nil {
 			fmt.Print(err)
 		}
-		defer resp.Body.Close()
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
