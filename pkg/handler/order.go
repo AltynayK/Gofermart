@@ -79,12 +79,7 @@ func (h *Handler) GetOrderAccrual() {
 			fmt.Print(err)
 		}
 		//
-		defer func() {
-			err := resp.Body.Close()
-			if err != nil {
-				fmt.Print(err)
-			}
-		}()
+		resp.Body.Close()
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
@@ -121,6 +116,7 @@ func (h *Handler) GetOrderAccrual() {
 		}
 		fmt.Print(rr)
 	}
+
 }
 
 func (h *Handler) receivingOrders(c *gin.Context) {
