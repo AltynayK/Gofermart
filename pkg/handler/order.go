@@ -79,6 +79,10 @@ func (h *Handler) GetOrderAccrual() {
 			fmt.Print(err)
 		}
 		//
+		if resp.StatusCode != http.StatusOK {
+			h.queueForAccrual <- orderNumber
+			return
+		}
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
