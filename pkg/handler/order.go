@@ -191,15 +191,15 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 	}
 	//проверка номера заказа на существование
 
-	// order, err := h.services.Order.GetOrder(num)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
-	// if order == nil {
-	// 	c.AbortWithStatus(http.StatusOK)
-	// 	return
-	// }
+	order, err := h.services.Order.GetOrder(num)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if order == nil {
+		c.AbortWithStatus(http.StatusOK)
+		return
+	}
 	current, err := h.services.Order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -210,13 +210,14 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		c.AbortWithStatus(http.StatusForbidden)
 		return
 	}
+	newcurrent := current - float32(input.Sum)
+	h.services.Order.UpdateUserBalance(userID, newcurrent)
 	_, err = h.services.Order.PostWithdrawBalance(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	newcurrent := current - float32(input.Sum)
-	h.services.Order.UpdateUserBalance(userID, newcurrent)
+
 	c.AbortWithStatus(http.StatusOK)
 }
 
