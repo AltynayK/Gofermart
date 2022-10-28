@@ -227,7 +227,7 @@ func (h *Handler) withdrawBalanceHistory(c *gin.Context) {
 	}
 
 	if withdrawals == nil {
-		c.AbortWithStatus(http.StatusOK)
+		c.AbortWithStatus(http.StatusNoContent)
 		return
 	}
 	c.JSON(http.StatusOK, withdrawals)
