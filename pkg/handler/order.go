@@ -207,13 +207,14 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		return
 	}
 	newcurrent := current - float32(input.Sum)
-	h.services.Order.UpdateUserBalance(userID, newcurrent)
+
 	_, err = h.services.Order.PostWithdrawBalance(input)
+
 	if err != nil {
 		newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-
+	h.services.Order.UpdateUserBalance(userID, newcurrent)
 	c.AbortWithStatus(http.StatusOK)
 }
 
