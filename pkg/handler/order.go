@@ -190,7 +190,6 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		return
 	}
 	//проверка номера заказа на существование
-
 	order, err := h.services.Order.GetOrder(num)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -212,7 +211,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 	}
 	newcurrent := current - float32(input.Sum)
 	h.services.Order.UpdateUserBalance(userID, newcurrent)
-	_, err = h.services.Order.PostWithdrawBalance(input)
+	_, err = h.services.Order.PostWithdrawBalance(input, userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 		return
