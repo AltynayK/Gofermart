@@ -52,9 +52,9 @@ func (r *OrderPostgres) GetAll(userID int) ([]models.OrdersOut, error) {
 
 }
 
-func (r *OrderPostgres) PostWithdrawBalance(order models.Withdrawals, userID int) (int64, error) {
-	query := fmt.Sprintf("UPDATE %s SET withdrawn=$2, processed_at=$3 WHERE number=$1 AND user_id=$4", ordersTable)
-	res, err := r.db.Exec(query, order.Order, order.Sum, time.Now(), userID)
+func (r *OrderPostgres) PostWithdrawBalance(order models.Withdrawals) (int64, error) {
+	query := fmt.Sprintf("UPDATE %s SET withdrawn=$2, processed_at=$3 WHERE number=$1", ordersTable)
+	res, err := r.db.Exec(query, order.Order, order.Sum, time.Now())
 	if err != nil {
 		return 0, err
 	}

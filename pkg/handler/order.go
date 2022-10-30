@@ -79,10 +79,6 @@ func (h *Handler) GetOrderAccrual() {
 			fmt.Print(err)
 		}
 		//
-		if resp.StatusCode != http.StatusOK {
-			h.queueForAccrual <- orderNumber
-			return
-		}
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
@@ -211,7 +207,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 	}
 	newcurrent := current - float32(input.Sum)
 	h.services.Order.UpdateUserBalance(userID, newcurrent)
-	_, err = h.services.Order.PostWithdrawBalance(input, userID)
+	_, err = h.services.Order.PostWithdrawBalance(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 		return

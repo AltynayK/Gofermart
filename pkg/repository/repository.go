@@ -16,7 +16,7 @@ type Order interface {
 	GetOrderByUserAndNumber(userID int, number int) ([]models.OrdersOut, error)
 	GetOrder(number int) ([]models.OrdersOut, error)
 	//GetUserBalance(userID int) ([]gofermart.UserBalance, error)
-	PostWithdrawBalance(order models.Withdrawals, userID int) (int64, error)
+	PostWithdrawBalance(order models.Withdrawals) (int64, error)
 	GetUserCurrent(userID int) (float32, error)
 	GetUserWithdrawn(userID int) (float32, error)
 	UpdateUserBalance(userID int, current float32) (int64, error)
