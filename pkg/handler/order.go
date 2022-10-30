@@ -79,6 +79,7 @@ func (h *Handler) GetOrderAccrual() {
 			fmt.Print(err)
 		}
 		//
+
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
@@ -147,7 +148,7 @@ func (h *Handler) receivingBalance(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	current, err := h.services.Order.GetUserCurrent(userID)
+	currents, err := h.services.Order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -157,7 +158,7 @@ func (h *Handler) receivingBalance(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-
+	current := currents - withdrawn
 	c.JSON(http.StatusOK, models.UserBalance{
 		Current:   current,
 		Withdrawn: withdrawn,

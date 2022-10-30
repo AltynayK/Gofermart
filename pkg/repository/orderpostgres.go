@@ -68,7 +68,7 @@ func (r *OrderPostgres) PostWithdrawBalance(order models.Withdrawals) (int64, er
 
 //получение баланса пользователя
 func (r *OrderPostgres) GetUserCurrent(userID int) (float32, error) {
-	row := r.db.QueryRow("SELECT current FROM users WHERE id = $1", userID)
+	row := r.db.QueryRow("SELECT SUM(accrual) FROM orders WHERE user_id = $1", userID)
 	data := models.UserBalance{}
 	err := row.Scan(&data.Current)
 	return data.Current, err
