@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-	//config := configs.NewConfig()
 	handlers := handler.NewHandler()
 	srv := new(handler.Server)
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)

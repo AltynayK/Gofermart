@@ -60,7 +60,6 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 	h.WriteOrderToChan(string(input))
-
 	c.AbortWithStatus(http.StatusAccepted)
 }
 func (h *Handler) WriteOrderToChan(processingOrder string) {
@@ -69,7 +68,6 @@ func (h *Handler) WriteOrderToChan(processingOrder string) {
 }
 
 func (h *Handler) GetOrderAccrual() {
-	//config := configs.NewConfig()
 	var orderNumber string
 	for i := range h.queueForAccrual {
 		orderNumber = i
@@ -78,8 +76,6 @@ func (h *Handler) GetOrderAccrual() {
 		if err != nil {
 			fmt.Print(err)
 		}
-		//
-
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Print(err)
@@ -89,11 +85,9 @@ func (h *Handler) GetOrderAccrual() {
 		if err != nil {
 			fmt.Print(err)
 		}
-		//fmt.Print(string(responseBody))
 		_, err = h.services.Order.PostBalance(datas)
 		if err != nil {
 			fmt.Print(err)
-			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
@@ -101,12 +95,10 @@ func (h *Handler) GetOrderAccrual() {
 		//Взаимодействие с системой расчёта начислений баллов лояльности
 		if err != nil {
 			fmt.Print(err)
-			// newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 		current, err := h.services.Order.GetUserCurrent(userID)
 		if err != nil {
-			//newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 		newcurrent := current + datas.Accrual
@@ -114,7 +106,6 @@ func (h *Handler) GetOrderAccrual() {
 		_, err = h.services.Order.UpdateUserBalance(userID, newcurrent)
 		if err != nil {
 			fmt.Print(err)
-			//newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
