@@ -148,7 +148,7 @@ func (h *Handler) receivingBalance(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currents, err := h.services.Order.GetUserCurrent(userID)
+	current, err := h.services.Order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -158,7 +158,7 @@ func (h *Handler) receivingBalance(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	current := currents - withdrawn
+
 	c.JSON(http.StatusOK, models.UserBalance{
 		Current:   current,
 		Withdrawn: withdrawn,
@@ -186,16 +186,6 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnprocessableEntity)
 		return
 	}
-	//проверка номера заказа на существование
-	order, err := h.services.Order.GetOrder(num)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if order == nil {
-		c.AbortWithStatus(http.StatusOK)
-		return
-	}
 	current, err := h.services.Order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -206,14 +196,27 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		c.AbortWithStatus(http.StatusForbidden)
 		return
 	}
-	newcurrent := current - float32(input.Sum)
 
-	_, err = h.services.Order.PostWithdrawBalance(input)
-
+	//проверка номера заказа на существование
+	order, err := h.services.Order.GetOrder(num)
 	if err != nil {
-		newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	if order == nil {
+		err = h.services.Order.PostNewWithdrawBalance(input, userID)
+		if err != nil {
+			newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
+			return
+		}
+	} else {
+		_, err = h.services.Order.PostWithdrawBalance(input)
+		if err != nil {
+			newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
+			return
+		}
+	}
+	newcurrent := current - float32(input.Sum)
 	h.services.Order.UpdateUserBalance(userID, newcurrent)
 	c.AbortWithStatus(http.StatusOK)
 }

@@ -36,6 +36,10 @@ func (s *OrderService) PostWithdrawBalance(order models.Withdrawals) (int64, err
 	return s.repo.PostWithdrawBalance(order)
 }
 
+func (s *OrderService) PostNewWithdrawBalance(order models.Withdrawals, userID int) error {
+	return s.repo.PostNewWithdrawBalance(order, userID)
+}
+
 func (s *OrderService) GetUserCurrent(userID int) (float32, error) {
 	return s.repo.GetUserCurrent(userID)
 }

@@ -65,10 +65,22 @@ func (r *OrderPostgres) PostWithdrawBalance(order models.Withdrawals) (int64, er
 	return count, err
 
 }
+func (r *OrderPostgres) PostNewWithdrawBalance(order models.Withdrawals, userID int) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	createOrder := fmt.Sprintf("INSERT INTO %s (number, withdrawn, processed_at, uploaded_at, user_id) VALUES ($1, $2, $3, $4, $5)", ordersTable)
+	tx.QueryRow(createOrder, order.Order, order.Sum, time.Now(), time.Now(), userID)
+
+	return tx.Commit()
+
+}
 
 //получение баланса пользователя
 func (r *OrderPostgres) GetUserCurrent(userID int) (float32, error) {
-	row := r.db.QueryRow("SELECT SUM(accrual) FROM orders WHERE user_id = $1", userID)
+	row := r.db.QueryRow("SELECT current FROM users WHERE id = $1", userID)
 	data := models.UserBalance{}
 	err := row.Scan(&data.Current)
 	return data.Current, err
