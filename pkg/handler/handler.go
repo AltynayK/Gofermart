@@ -1,34 +1,19 @@
 package handler
 
 import (
-	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
-	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 )
 
-const chanVal = 5
-
 type Handler struct {
-	config          *configs.Config
-	services        *service.Service
-	db              *sqlx.DB
-	repos           *repository.Repository
-	queueForAccrual chan string
+	services *service.Service
 }
 
 func NewHandler() *Handler {
-	config := configs.NewConfig()
-	db := repository.NewPostgresDB(config)
-	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
+
+	services := service.NewService(NewServer().repos)
 	return &Handler{
-		config:          config,
-		db:              db,
-		repos:           repos,
-		services:        services,
-		queueForAccrual: make(chan string, chanVal),
+		services: services,
 	}
 }
 
