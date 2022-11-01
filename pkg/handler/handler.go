@@ -8,6 +8,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+const chanVal = 5
+
 type Handler struct {
 	config          *configs.Config
 	services        *service.Service
@@ -16,14 +18,16 @@ type Handler struct {
 	queueForAccrual chan string
 }
 
-const chanVal = 5
-
 func NewHandler() *Handler {
+	config := configs.NewConfig()
+	db := repository.NewPostgresDB(config)
+	repos := repository.NewRepository(db)
+	services := service.NewService(repos)
 	return &Handler{
-		config:          configs.NewConfig(),
-		db:              repository.NewPostgresDB(configs.NewConfig()),
-		repos:           repository.NewRepository(repository.NewPostgresDB(configs.NewConfig())),
-		services:        service.NewService(repository.NewRepository(repository.NewPostgresDB(configs.NewConfig()))),
+		config:          config,
+		db:              db,
+		repos:           repos,
+		services:        services,
 		queueForAccrual: make(chan string, chanVal),
 	}
 }
