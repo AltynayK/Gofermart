@@ -5,15 +5,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const chanVal = 5
+
 type Handler struct {
-	services *service.Service
+	services        *service.Service
+	queueForAccrual chan string
 }
 
 func NewHandler() *Handler {
 
 	services := service.NewService(NewServer().repos)
 	return &Handler{
-		services: services,
+		services:        services,
+		queueForAccrual: make(chan string, chanVal),
 	}
 }
 
