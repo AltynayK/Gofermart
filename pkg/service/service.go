@@ -5,13 +5,13 @@ import (
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
 )
 
-type Authorization interface {
+type Auth interface {
 	CreateUser(user models.User) error
 	GenerateToken(login, password string) (string, error)
 	ParseToken(token string) (int, error)
 }
 
-type Order interface {
+type Orders interface {
 	Create(userID int, number string) error
 	GetAll(userID int) ([]models.OrdersOut, error)
 	GetOrderByUserAndNumber(userID int, number int) ([]models.OrdersOut, error)
@@ -27,13 +27,13 @@ type Order interface {
 }
 
 type Service struct {
-	Authorization
-	Order
+	Auth
+	Orders
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
-		Authorization: NewAuthService(repos.Authorization),
-		Order:         NewOrderService(repos.Order),
+		Auth:   NewAuthService(repos.Authorization),
+		Orders: NewOrderService(repos.Order),
 	}
 }

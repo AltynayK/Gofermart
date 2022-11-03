@@ -14,12 +14,12 @@ func (h *Handler) register(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	err := h.services.Authorization.CreateUser(input)
+	err := h.services.Auth.CreateUser(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
 	}
-	token, err := h.services.Authorization.GenerateToken(input.Login, input.Password)
+	token, err := h.services.Auth.GenerateToken(input.Login, input.Password)
 	if err != nil {
 		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
@@ -40,7 +40,7 @@ func (h *Handler) login(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	token, err := h.services.Authorization.GenerateToken(input.Login, input.Password)
+	token, err := h.services.Auth.GenerateToken(input.Login, input.Password)
 	if err != nil {
 		newErrorResponse(c, http.StatusConflict, err.Error())
 		return
