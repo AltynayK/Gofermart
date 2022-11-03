@@ -64,14 +64,14 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 }
 func (h *Handler) WriteOrderToChan(processingOrder string) {
 
-	h.queueForAccrual <- processingOrder
+	NewServer().queueForAccrual <- processingOrder
 
 }
 
 func (h *Handler) GetOrderAccrual() {
 	var orderNumber string
 
-	for i := range h.queueForAccrual {
+	for i := range NewServer().queueForAccrual {
 		orderNumber = i
 		var datas models.OrderBalance
 		resp, err := http.Get(NewServer().config.AccrualSystemAddress + "/api/orders/" + orderNumber)

@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"os/signal"
 	"syscall"
 
@@ -10,11 +10,10 @@ import (
 )
 
 func main() {
-	handlers := handler.NewHandler()
-	srv := new(handler.Server)
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	if err := srv.Run(ctx, handlers, handlers.InitRoutes()); err != nil {
-		fmt.Print(err)
+	srv := new(handler.Server)
+	if err := srv.Run(ctx); err != nil {
+		log.Fatal(err)
 	}
 }

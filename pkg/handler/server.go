@@ -16,13 +16,15 @@ const (
 	writeTimeout    = 10 * time.Second
 	maxHeaderBytes  = 1 << 20
 	shutdownTimeout = 5 * time.Second
+	chanVal         = 5
 )
 
 type Server struct {
-	httpServer *http.Server
-	config     *configs.Config
-	db         *sqlx.DB
-	repos      *repository.Repository
+	httpServer      *http.Server
+	config          *configs.Config
+	db              *sqlx.DB
+	repos           *repository.Repository
+	queueForAccrual chan string
 }
 
 func NewServer() *Server {
@@ -31,17 +33,18 @@ func NewServer() *Server {
 	db := repository.NewPostgresDB(config)
 	repos := repository.NewRepository(db)
 	return &Server{
-		config: config,
-		db:     db,
-		repos:  repos,
+		config:          config,
+		db:              db,
+		repos:           repos,
+		queueForAccrual: make(chan string, chanVal),
 	}
 }
-func (s *Server) Run(ctx context.Context, handlers *Handler, handler http.Handler) error {
+func (s *Server) Run(ctx context.Context) error {
 
 	s.httpServer = &http.Server{
 
 		Addr:           NewServer().config.RunAddress,
-		Handler:        handler,
+		Handler:        NewHandler().InitRoutes(),
 		MaxHeaderBytes: maxHeaderBytes,
 		ReadTimeout:    readTimeout,
 		WriteTimeout:   writeTimeout,
@@ -54,7 +57,7 @@ func (s *Server) Run(ctx context.Context, handlers *Handler, handler http.Handle
 	<-ctx.Done()
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
-	close(handlers.queueForAccrual)
+	close(s.queueForAccrual)
 	NewServer().db.Close()
 	if err := s.Shutdown(shutdownCtx); err != nil {
 		return err
