@@ -6,10 +6,10 @@ import (
 )
 
 type OrderService struct {
-	repo repository.Order
+	repo repository.Repository
 }
 
-func NewOrderService(repo repository.Order) *OrderService {
+func NewOrderService(repo repository.Repository) *OrderService {
 	return &OrderService{repo: repo}
 }
 

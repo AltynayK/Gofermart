@@ -31,9 +31,9 @@ type Service struct {
 	Orders
 }
 
-func NewService(repos *repository.Repository) *Service {
+func NewService(repos *repository.MyStruct) *Service {
 	return &Service{
-		Auth:   NewAuthService(repos.Authorization),
-		Orders: NewOrderService(repos.Order),
+		Auth:   NewAuthService(repos.Repository),
+		Orders: NewOrderService(repos.Repository),
 	}
 }

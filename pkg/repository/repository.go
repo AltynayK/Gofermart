@@ -5,12 +5,9 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Authorization interface {
+type Repository interface {
 	CreateUser(user models.User) error
 	GetUser(login, password string) (models.User, error)
-}
-
-type Order interface {
 	Create(userID int, number string) error
 	GetAll(userID int) ([]models.OrdersOut, error)
 	GetOrderByUserAndNumber(userID int, number int) ([]models.OrdersOut, error)
@@ -25,14 +22,12 @@ type Order interface {
 	GetOrderUserID(number string) (int, error)
 }
 
-type Repository struct {
-	Authorization
-	Order
+type MyStruct struct {
+	Repository
 }
 
-func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{
-		Authorization: NewAuthPostgres(db),
-		Order:         NewOrderPostgres(db),
+func NewRepository(db *sqlx.DB) *MyStruct {
+	return &MyStruct{
+		Repository: NewDataBase(db),
 	}
 }

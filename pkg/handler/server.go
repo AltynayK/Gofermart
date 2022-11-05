@@ -22,7 +22,7 @@ type Server struct {
 	httpServer *http.Server
 	config     *configs.Config
 	db         *sqlx.DB
-	repos      *repository.Repository
+	repos      *repository.MyStruct
 }
 
 func NewServer() *Server {
