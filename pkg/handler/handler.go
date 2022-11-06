@@ -5,10 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const chanVal = 5
+
 type Handler struct {
 	//services *service.Service
-	auth  *service.AuthService
-	order *service.OrderService
+	auth            *service.AuthService
+	order           *service.OrderService
+	queueForAccrual chan string
 }
 
 func NewHandler() *Handler {
@@ -18,8 +21,9 @@ func NewHandler() *Handler {
 	order := service.NewOrderService(NewServer().repos)
 	return &Handler{
 		//services: services,
-		auth:  auth,
-		order: order,
+		auth:            auth,
+		order:           order,
+		queueForAccrual: make(chan string, chanVal),
 	}
 }
 
