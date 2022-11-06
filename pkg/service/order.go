@@ -13,8 +13,8 @@ func NewOrderService(repo repository.Repository) *OrderService {
 	return &OrderService{repo: repo}
 }
 
-func (s *OrderService) Create(userID int, number string) error {
-	return s.repo.Create(userID, number)
+func (s *OrderService) CreateOrder(userID int, number string) error {
+	return s.repo.CreateOrder(userID, number)
 }
 
 func (s *OrderService) GetOrderByUserAndNumber(userID int, number int) ([]models.OrdersOut, error) {
@@ -24,10 +24,14 @@ func (s *OrderService) GetOrderByUserAndNumber(userID int, number int) ([]models
 func (s *OrderService) GetOrder(number int) ([]models.OrdersOut, error) {
 	return s.repo.GetOrder(number)
 }
-func (s *OrderService) GetAll(userID int) ([]models.OrdersOut, error) {
-	return s.repo.GetAll(userID)
+func (s *OrderService) GetAllOrders(userID int) ([]models.OrdersOut, error) {
+	return s.repo.GetAllOrders(userID)
 }
 
+func (s *OrderService) GetOrderUserID(number string) (int, error) {
+	return s.repo.GetOrderUserID(number)
+
+}
 func (s *OrderService) PostWithdrawBalance(order models.Withdrawals) (int64, error) {
 	return s.repo.PostWithdrawBalance(order)
 }
@@ -54,9 +58,4 @@ func (s *OrderService) GetAllWithdrawals(userID int) ([]models.Withdrawals, erro
 
 func (s *OrderService) PostBalance(order models.OrderBalance) (int64, error) {
 	return s.repo.PostBalance(order)
-}
-
-func (s *OrderService) GetOrderUserID(number string) (int, error) {
-	return s.repo.GetOrderUserID(number)
-
 }

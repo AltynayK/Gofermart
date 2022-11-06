@@ -1,15 +1,14 @@
 package repository
 
 import (
-	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
 )
 
 type Repository interface {
 	CreateUser(user models.User) error
 	GetUser(login, password string) (models.User, error)
-	Create(userID int, number string) error
-	GetAll(userID int) ([]models.OrdersOut, error)
+	CreateOrder(userID int, number string) error
+	GetAllOrders(userID int) ([]models.OrdersOut, error)
 	GetOrderByUserAndNumber(userID int, number int) ([]models.OrdersOut, error)
 	GetOrder(number int) ([]models.OrdersOut, error)
 	PostWithdrawBalance(order models.Withdrawals) (int64, error)
@@ -20,8 +19,4 @@ type Repository interface {
 	GetAllWithdrawals(userID int) ([]models.Withdrawals, error)
 	PostBalance(order models.OrderBalance) (int64, error)
 	GetOrderUserID(number string) (int, error)
-}
-
-func NewRepository(config *configs.Config) Repository {
-	return NewDataBase(configs.NewConfig())
 }

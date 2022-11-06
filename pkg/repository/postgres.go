@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
@@ -28,14 +27,17 @@ func NewDataBase(config *configs.Config) Repository {
 	}
 }
 
+func NewRepository(config *configs.Config) Repository {
+	return NewDataBase(config)
+}
 func NewPostgresDB(config *configs.Config) *sqlx.DB {
 	db, err := sqlx.Open("postgres", configs.DatabaseURI)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print(err)
 	}
 	err = db.Ping()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print(err)
 	}
 	CreateTableUsers(db)
 	CreateTableOrders(db)
@@ -46,14 +48,14 @@ func NewPostgresDB(config *configs.Config) *sqlx.DB {
 func CreateTableUsers(db *sqlx.DB) {
 	_, err := db.Exec("CREATE TABLE IF NOT EXISTS users (id serial primary key, login varchar UNIQUE, password varchar, current decimal DEFAULT '0')")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print(err)
 	}
 
 }
 func CreateTableOrders(db *sqlx.DB) {
 	_, err := db.Exec("CREATE TABLE IF NOT EXISTS orders (id serial primary key, number varchar UNIQUE, user_id int, status varchar, accrual decimal DEFAULT '0', uploaded_at timestamptz NOT NULL, withdrawn decimal DEFAULT '0', processed_at timestamptz DEFAULT CURRENT_DATE)")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print(err)
 	}
 
 }
@@ -74,7 +76,7 @@ func (r *DataBase) GetUser(login, password string) (models.User, error) {
 	err := r.db.Get(&user, query, login, password)
 	return user, err
 }
-func (r *DataBase) Create(userID int, number string) error {
+func (r *DataBase) CreateOrder(userID int, number string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
@@ -102,7 +104,7 @@ func (r *DataBase) GetOrder(number int) ([]models.OrdersOut, error) {
 	return orders, err
 
 }
-func (r *DataBase) GetAll(userID int) ([]models.OrdersOut, error) {
+func (r *DataBase) GetAllOrders(userID int) ([]models.OrdersOut, error) {
 	var orders []models.OrdersOut
 	query := fmt.Sprintf("SELECT number, status, accrual, uploaded_at FROM %s WHERE user_id = $1 ORDER BY uploaded_at DESC", ordersTable)
 	err := r.db.Select(&orders, query, userID)

@@ -54,7 +54,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 	//создание нового заказа
-	err = h.order.Create(userID, string(input))
+	err = h.order.CreateOrder(userID, string(input))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -122,7 +122,7 @@ func (h *Handler) receivingOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	orders, err := h.order.GetAll(userID)
+	orders, err := h.order.GetAllOrders(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
