@@ -26,7 +26,6 @@ type Server struct {
 }
 
 func NewServer() *Server {
-
 	config := configs.NewConfig()
 	db := repository.NewPostgresDB(config)
 	repos := repository.NewRepository(config)
@@ -39,7 +38,6 @@ func NewServer() *Server {
 func (s *Server) Run(ctx context.Context) error {
 
 	s.httpServer = &http.Server{
-
 		Addr:           NewServer().config.RunAddress,
 		Handler:        NewHandler().InitRoutes(),
 		MaxHeaderBytes: maxHeaderBytes,

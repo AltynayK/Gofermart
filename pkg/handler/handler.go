@@ -8,19 +8,15 @@ import (
 const chanVal = 5
 
 type Handler struct {
-	//services *service.Service
 	auth            *service.AuthService
 	order           *service.OrderService
 	queueForAccrual chan string
 }
 
 func NewHandler() *Handler {
-
-	//services := service.NewService(NewServer().repos)
 	auth := service.NewAuthService(NewServer().repos)
 	order := service.NewOrderService(NewServer().repos)
 	return &Handler{
-		//services: services,
 		auth:            auth,
 		order:           order,
 		queueForAccrual: make(chan string, chanVal),
