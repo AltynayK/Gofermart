@@ -17,11 +17,15 @@ const (
 )
 
 type DataBase struct {
-	db *sqlx.DB
+	config *configs.Config
+	db     *sqlx.DB
 }
 
-func NewDataBase(db *sqlx.DB) *DataBase {
-	return &DataBase{db: db}
+func NewDataBase(config *configs.Config) Repository {
+	return &DataBase{
+		config: config,
+		db:     NewPostgresDB(config),
+	}
 }
 
 func NewPostgresDB(config *configs.Config) *sqlx.DB {

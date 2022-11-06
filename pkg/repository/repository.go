@@ -1,8 +1,8 @@
 package repository
 
 import (
+	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/models"
-	"github.com/jmoiron/sqlx"
 )
 
 type Repository interface {
@@ -22,12 +22,6 @@ type Repository interface {
 	GetOrderUserID(number string) (int, error)
 }
 
-type MyStruct struct {
-	Repository
-}
-
-func NewRepository(db *sqlx.DB) *MyStruct {
-	return &MyStruct{
-		Repository: NewDataBase(db),
-	}
+func NewRepository(config *configs.Config) Repository {
+	return NewDataBase(configs.NewConfig())
 }

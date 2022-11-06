@@ -34,7 +34,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 	//проверка код ответа 200, номер заказа уже был загружен этим пользователем
-	orders, err := h.services.Orders.GetOrderByUserAndNumber(userID, num)
+	orders, err := h.order.GetOrderByUserAndNumber(userID, num)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -44,7 +44,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 	//проверка код ответа 409, номер заказа уже был загружен другим пользователем
-	order, err := h.services.Orders.GetOrder(num)
+	order, err := h.order.GetOrder(num)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -54,7 +54,7 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 		return
 	}
 	//создание нового заказа
-	err = h.services.Orders.Create(userID, string(input))
+	err = h.order.Create(userID, string(input))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -64,14 +64,14 @@ func (h *Handler) loadingOrders(c *gin.Context) {
 }
 func (h *Handler) WriteOrderToChan(processingOrder string) {
 
-	h.queueForAccrual <- processingOrder
+	NewServer().queueForAccrual <- processingOrder
 
 }
 
 func (h *Handler) GetOrderAccrual() {
 	var orderNumber string
 
-	for i := range h.queueForAccrual {
+	for i := range NewServer().queueForAccrual {
 		orderNumber = i
 		var datas models.OrderBalance
 		resp, err := http.Get(NewServer().config.AccrualSystemAddress + "/api/orders/" + orderNumber)
@@ -87,25 +87,25 @@ func (h *Handler) GetOrderAccrual() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		_, err = h.services.Orders.PostBalance(datas)
+		_, err = h.order.PostBalance(datas)
 		if err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		userID, err := h.services.Orders.GetOrderUserID(orderNumber)
+		userID, err := h.order.GetOrderUserID(orderNumber)
 		//Взаимодействие с системой расчёта начислений баллов лояльности
 		if err != nil {
 			log.Fatal(err)
 			return
 		}
-		current, err := h.services.Orders.GetUserCurrent(userID)
+		current, err := h.order.GetUserCurrent(userID)
 		if err != nil {
 			return
 		}
 		newcurrent := current + datas.Accrual
 
-		_, err = h.services.Orders.UpdateUserBalance(userID, newcurrent)
+		_, err = h.order.UpdateUserBalance(userID, newcurrent)
 		if err != nil {
 			log.Fatal(err)
 			return
@@ -122,7 +122,7 @@ func (h *Handler) receivingOrders(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	orders, err := h.services.Orders.GetAll(userID)
+	orders, err := h.order.GetAll(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -141,12 +141,12 @@ func (h *Handler) receivingBalance(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	current, err := h.services.Orders.GetUserCurrent(userID)
+	current, err := h.order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	withdrawn, err := h.services.Orders.GetUserWithdrawn(userID)
+	withdrawn, err := h.order.GetUserWithdrawn(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -179,7 +179,7 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnprocessableEntity)
 		return
 	}
-	current, err := h.services.Orders.GetUserCurrent(userID)
+	current, err := h.order.GetUserCurrent(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -191,26 +191,26 @@ func (h *Handler) withdrawBalance(c *gin.Context) {
 	}
 
 	//проверка номера заказа на существование
-	order, err := h.services.Orders.GetOrder(num)
+	order, err := h.order.GetOrder(num)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	if order == nil {
-		err = h.services.Orders.PostNewWithdrawBalance(input, userID)
+		err = h.order.PostNewWithdrawBalance(input, userID)
 		if err != nil {
 			newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
 	} else {
-		_, err = h.services.Orders.PostWithdrawBalance(input)
+		_, err = h.order.PostWithdrawBalance(input)
 		if err != nil {
 			newErrorResponse(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
 	}
 	newcurrent := current - float32(input.Sum)
-	h.services.Orders.UpdateUserBalance(userID, newcurrent)
+	h.order.UpdateUserBalance(userID, newcurrent)
 	c.AbortWithStatus(http.StatusOK)
 }
 
@@ -222,7 +222,7 @@ func (h *Handler) withdrawBalanceHistory(c *gin.Context) {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	withdrawals, err := h.services.Orders.GetAllWithdrawals(userID)
+	withdrawals, err := h.order.GetAllWithdrawals(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
