@@ -23,22 +23,25 @@ type Server struct {
 	config     *configs.Config
 	db         *sqlx.DB
 	repos      repository.Repository
+	addr       string
 }
 
 func NewServer() *Server {
 	config := configs.NewConfig()
 	db := repository.NewPostgresDB(config)
 	repos := repository.NewRepository(config)
+	addr := config.RunAddress
 	return &Server{
 		config: config,
 		db:     db,
 		repos:  repos,
+		addr:   addr,
 	}
 }
 func (s *Server) Run(ctx context.Context) error {
 
 	s.httpServer = &http.Server{
-		Addr:           NewServer().config.RunAddress,
+		Addr:           NewServer().addr,
 		Handler:        NewHandler().InitRoutes(),
 		MaxHeaderBytes: maxHeaderBytes,
 		ReadTimeout:    readTimeout,
