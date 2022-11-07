@@ -19,25 +19,25 @@ const (
 )
 
 type Server struct {
-	httpServer *http.Server
 	config     *configs.Config
-	db         *sqlx.DB
 	repos      repository.Repository
+	httpServer *http.Server
+	db         *sqlx.DB
 }
 
 func NewServer() *Server {
 	config := configs.NewConfig()
 	db := repository.NewPostgresDB(config)
 	repos := repository.NewRepository(config)
-
-	return &Server{
+	server := &Server{
 		config: config,
 		db:     db,
 		repos:  repos,
 	}
+
+	return server
 }
 func (s *Server) Run(ctx context.Context) error {
-
 	s.httpServer = &http.Server{
 		Addr:           NewServer().config.RunAddress,
 		Handler:        NewHandler().InitRoutes(),
