@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/service"
 	"github.com/gin-gonic/gin"
 )
@@ -13,11 +14,10 @@ type Handler struct {
 	queueForAccrual chan string
 }
 
-func NewHandler() *Handler {
-	server := NewServer()
+func NewHandler(repos repository.Repository) *Handler {
 	return &Handler{
-		auth:            service.NewAuthService(server.repos),
-		order:           service.NewOrderService(server.repos),
+		auth:            service.NewAuthService(repos),
+		order:           service.NewOrderService(repos),
 		queueForAccrual: make(chan string, chanVal),
 	}
 }

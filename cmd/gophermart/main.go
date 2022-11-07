@@ -12,7 +12,7 @@ import (
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	srv := new(handler.Server)
+	srv := handler.NewServer()
 	if err := srv.Run(ctx); err != nil {
 		fmt.Println(err)
 	}
