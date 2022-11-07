@@ -5,8 +5,16 @@ import (
 )
 
 type Repository interface {
+	Authorizer
+	Orderer
+}
+
+type Authorizer interface {
 	CreateUser(user models.User) error
 	GetUser(login, password string) (models.User, error)
+}
+
+type Orderer interface {
 	CreateOrder(userID int, number string) error
 	GetAllOrders(userID int) ([]models.OrdersOut, error)
 	GetOrderByUserAndNumber(userID int, number int) ([]models.OrdersOut, error)

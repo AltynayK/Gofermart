@@ -11,16 +11,13 @@ type Handler struct {
 	auth            *service.AuthService
 	order           *service.OrderService
 	queueForAccrual chan string
-	server          *Server
 }
 
 func NewHandler() *Handler {
 	server := NewServer()
-	auth := service.NewAuthService(server.repos)
-	order := service.NewOrderService(server.repos)
 	return &Handler{
-		auth:            auth,
-		order:           order,
+		auth:            service.NewAuthService(server.repos),
+		order:           service.NewOrderService(server.repos),
 		queueForAccrual: make(chan string, chanVal),
 	}
 }

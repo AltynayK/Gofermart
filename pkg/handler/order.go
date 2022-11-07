@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -76,27 +76,27 @@ func (h *Handler) GetOrderAccrual() {
 		var datas models.OrderBalance
 		resp, err := http.Get(NewServer().config.AccrualSystemAddress + "/api/orders/" + orderNumber)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 		resp.Body.Close()
 		err = json.Unmarshal(responseBody, &datas)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 		_, err = h.order.PostBalance(datas)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 			return
 		}
 
 		userID, err := h.order.GetOrderUserID(orderNumber)
 		//Взаимодействие с системой расчёта начислений баллов лояльности
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 			return
 		}
 		current, err := h.order.GetUserCurrent(userID)
@@ -107,7 +107,7 @@ func (h *Handler) GetOrderAccrual() {
 
 		_, err = h.order.UpdateUserBalance(userID, newcurrent)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 			return
 		}
 

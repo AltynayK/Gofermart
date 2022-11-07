@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"os/signal"
 	"syscall"
 
@@ -14,6 +14,6 @@ func main() {
 	defer stop()
 	srv := new(handler.Server)
 	if err := srv.Run(ctx); err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 }
