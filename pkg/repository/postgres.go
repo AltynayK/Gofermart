@@ -196,3 +196,6 @@ func (r *DataBase) GetOrderUserID(number string) (int, error) {
 	err := row.Scan(&userID.UserID)
 	return userID.UserID, err
 }
+func (r *DataBase) Close() {
+	r.db.Close()
+}

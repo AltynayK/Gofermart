@@ -7,6 +7,7 @@ import (
 type Repository interface {
 	Authorizer
 	Orderer
+	Close()
 }
 
 type Authorizer interface {

@@ -8,7 +8,6 @@ import (
 
 	"github.com/AltynayK/go-musthave-diploma-tpl/configs"
 	"github.com/AltynayK/go-musthave-diploma-tpl/pkg/repository"
-	"github.com/jmoiron/sqlx"
 )
 
 const (
@@ -23,17 +22,15 @@ type Server struct {
 	repos      repository.Repository
 	httpServer *http.Server
 	handler    *Handler
-	db         *sqlx.DB
 }
 
 func NewServer() *Server {
 	config := configs.NewConfig()
-	db := repository.NewPostgresDB(config)
+
 	repos := repository.NewRepository(config)
 
 	return &Server{
 		config:  config,
-		db:      db,
 		repos:   repos,
 		handler: NewHandler(repos),
 	}
@@ -57,7 +54,8 @@ func (s *Server) Run(ctx context.Context) error {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 	close(s.handler.queueForAccrual)
-	s.db.Close()
+	fmt.Println("Stopping db...")
+	s.repos.Close()
 	if err := s.Shutdown(shutdownCtx); err != nil {
 		return err
 	}
